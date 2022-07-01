@@ -1,25 +1,43 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>AISA</title>
-        <meta name="viewport" content="initial-scale=1, width=device-width">
-        <link href="homepage.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    </head>
-    <body>
-        <div>
-            <div>
-                <a href="homepage.html"><img src="github_logo.png" alt="AISA">AISA</a>
-            </div>
+
+<head>
+    <title>AISA</title>
+    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <link href="homepage.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: white;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="homepage.html">
+                <img src="github_logo.png" alt="AISA" width="30" height="24" class="d-inline-block align-text-top">
+                AISA
+            </a>
+        </div>
+    </nav>
+
+    <div class="text-center">
+        <!-- <form action="https://www.google.com/search" class="mt-4" method="get">
+            <input autocomplete="off" autofocus class="form-control form-control-lg mb-4 mx-auto w-50" name="q"
+                placeholder="Query" type="search">
+            <button class="btn btn-light" type="submit">Google Search</button>
+            <button class="btn btn-light" name="btnI" type="submit">I'm Feeling Lucky</button>
+        </form> -->
+
+        <div class="text-center">
             <div>
                 <h1>Find your favourite suburb</h1>
-                <form action="listpage.html" method="get">
-                    <input name="q" type="text">
+                <form action="listpage.html" method="get" class="mt-4">
+                    <input autofocus placeholder="Search your school" name="q" type="search" class="form-control form-control-lg mb-4 mx-auto w-50">
                     <input type="submit">
                 </form>
             </div>
         </div>
-        
-    
-    </body>
+
+
+</body>
+
 </html>
