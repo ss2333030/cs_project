@@ -1,93 +1,25 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html>
     <head>
-        <title>background</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
-        <style>
-            img {
-                width:300px;
-                background-color: black;
-            }
-        </style>
-
+        <title>AISA</title>
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+        <link href="homepage.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     </head>
     <body>
-        <img src="3993a61ea8d3fd1f439d775a274e251f94ca5fd6.jpg">
-        <button type="button" class="btn btn-danger" id="red">A</button>
-        <button type="button" class="btn btn-success" id="green">B</button>
-        <button type="button" class="btn btn-primary" id="blue">C</button>
-
-
-
-        <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">Navbar</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Dropdown
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li><hr class="dropdown-divider"></li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link disabled">Disabled</a>
-                  </li>
-                </ul>
-                <form class="d-flex" role="search" form action="mappage.html" method="get">
-                    <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" name="q">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
-              </div>
+        <div>
+            <div>
+                <a href="homepage.html"><img src="github_logo.png" alt="AISA">AISA</a>
             </div>
-          </nav>
-
-        <div class="alert alert-success" role="alert">
-            A simple success alert—check it out!
-          </div>
-
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown button
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </div>
-        <script>
-
-            let body = document.querySelector('body');
-            document.querySelector('#red').addEventListener('click', function()
-            {
-                body.style.backgroundColor = 'red';
-            });
-
-            document.querySelector('#green').addEventListener('click', function() {
-                body.style.backgroundColor = 'green';
-            });
-
-            document.querySelector('#blue').addEventListener('click', function() {
-                body.style.backgroundColor = 'blue';
-            });
-
-        </script>
+            <div>
+                <h1>Find your favourite suburb</h1>
+                <form action="listpage.html" method="get">
+                    <input name="q" type="text">
+                    <input type="submit">
+                </form>
+            </div>
+        </div>
+        
+    
     </body>
 </html>
