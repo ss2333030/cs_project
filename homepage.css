@@ -1,4 +1,6 @@
-#mynavbar {
-    color: blue;
-    text-align: center;
+body {
+    background-image: url('australia_suburb.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;  
+    background-size: cover;
 }
