@@ -1,5 +1,6 @@
 {% extends "best_suburb/layout.html" %}
 {% block body %}
+{% load static %}
 <header>
     <h1>Welcome to Best Suburb!</h1>
 </header>
@@ -8,7 +9,7 @@
         <h2>Find your favourite suburb</h2>
     </div>
     <div>
-        <form action="{% url ':list' %}" method="get" autocomplete="on">
+        <form action="{% url 'list' %}" method="get" autocomplete="on">
             <div> <input type="search" name="school_name" size="50" placeholder="Your school name" autofocus>
             </div>
             <fieldset>
