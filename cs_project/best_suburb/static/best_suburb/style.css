@@ -21,6 +21,20 @@ body {
     overflow-x: auto;
 }
 
+
+#container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#container > div {
+    background-color: green;
+    font-size: 20px;
+    margin: 20px;
+    padding: 20px;
+    width: 200px;
+}
+
 ._table {
     width: 100%;
     border-collapse: collapse;

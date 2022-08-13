@@ -1,21 +1,16 @@
+from http.client import HTTPResponse
+from os import lstat
 from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
-from django import forms
-
-class NewForm(forms.Form):
-    task = forms.CharField(label="New Task")
 
 
 class Suburb:
-    def __init__(self, name, postcode, state, distance, crime_rate, average_rent):
+    def __init__(self, name, postcode, state, distance, crime_rate, rent):
         self.name = name
         self.postcode = postcode
         self.state = state
         self.distance = distance
         self.crime_rate = crime_rate
-        self.average_rent = average_rent
+        self.rent = rent
 
 
 suburbs = []
@@ -25,15 +20,32 @@ suburbs.append(Suburb("Oakleigh East", "3166", "Victoria", 3, 1, 210))
 suburbs.append(Suburb("Caufield", "3150", "Victoria", 7, 1, 200))
 
 # Create your views here.
-
-# def index(request):
-#     return HttpResponse("<h1 style=\"color:blue\">Hello, world!</h1>")
 def index(request):
     return render(request, "best_suburb/index.html")
 
 
 def list(request):
-    return render(request, "best_suburb/list.html")
+    if request.method == "POST":
+
+        get_min_value = lambda x: 0 if x == -1 else x
+        get_max_value = lambda x: float("inf") if x== -1 else x
+
+        school_name = request.POST.get("school_name")
+        distance_min = get_min_value(int(request.POST.get("distance_min"))) 
+        distance_max = get_max_value(int(request.POST.get("distance_max")))
+        rent_min = get_min_value(int(request.POST.get("rent_min")) )
+        rent_max = get_max_value(int(request.POST.get("rent_max")))
+        crime_rate_min = get_min_value(int(request.POST.get("crime_rate_min")))
+        crimte_rate_max = get_max_value(int(request.POST.get("crime_rate_max")))
+
+        filter = lambda lst, f: lst if len(lst) == 0 else [lst[0]] + filter(lst[1:],f) if f(lst[0]) else filter(lst[1:],f)
+        
+        qualified_suburbs = filter(suburbs, lambda e: distance_min<=e.distance<=distance_max and rent_min<=e.rent<=rent_max and crime_rate_min<=e.crime_rate<=crimte_rate_max)
+
+        return render(request, "best_suburb/list.html", {"qualified_suburbs": qualified_suburbs})
+
+    return render(request, "best_suburb/list.html"  )
+
 
 def info(request):
     return render(request, "best_suburb/info.html")

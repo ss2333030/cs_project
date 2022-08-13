@@ -8,47 +8,42 @@
     <div>
         <h2>Find your favourite suburb</h2>
     </div>
-    <div>
-        <form action="{% url 'list' %}" method="get" autocomplete="on">
+    <div id="container">
+        <form action="{% url 'list' %}" method="post" autocomplete="on">
+            {% csrf_token %}
             <div> <input type="search" name="school_name" size="50" placeholder="Your school name" autofocus>
             </div>
             <fieldset>
                 <legend>Distance from your school</legend>
-                <label for="distanceMin">Min</label>
-                <select id="distanceMin" name="distanceMin">
-                    <option value="0">Any</option>
-                    <option value="100">100m</option>
-                    <option value="200">200m</option>
-                    <option value="500">500m</option>
-                    <option value="1000">1km</option>
-                    <option value="2000">2km</option>
-                    <option value="5000">5km</option>
-                    <option value="10000">10km</option>
-                    <option value="20000">20km</option>
-                    <option value="50000">50km</option>
+                <label for="distance_min">Min</label>
+                <select id="distance_min" name="distance_min">
+                    <option value="-1" selected>Any</option>
+                    <option value="1">1km</option>
+                    <option value="2">2km</option>
+                    <option value="5">5km</option>
+                    <option value="10">10km</option>
+                    <option value="20">20km</option>
+                    <option value="50">50km</option>
 
                 </select>
-                <label for="distanceMax">Max</label>
-                <select id="distanceMax" name="distanceMax">
-                    <option value="0">Any</option>
-                    <option value="100">100m</option>
-                    <option value="200">200m</option>
-                    <option value="500">500m</option>
-                    <option value="1000">1km</option>
-                    <option value="2000">2km</option>
-                    <option value="5000">5km</option>
-                    <option value="10000">10km</option>
-                    <option value="20000">20km</option>
-                    <option value="50000">50km</option>
+                <label for="distance_max">Max</label>
+                <select id="distance_max" name="distance_max">
+                    <option value="-1" selected>Any</option>
+                    <option value="1">1km</option>
+                    <option value="2">2km</option>
+                    <option value="5">5km</option>
+                    <option value="10">10km</option>
+                    <option value="20">20km</option>
+                    <option value="50">50km</option>
                 </select>
             </fieldset>
             <fieldset>
                 <legend>Average rent</legend>
-                <label for="rentMin">Min</label>
-                <select id="rentMin" name="rentMin">
-                    <option value="0">$Any</option>
-                    <option value="100">$$100</option>
-                    <option value="125">$$125</option>
+                <label for="rent_min">Min</label>
+                <select id="rent_min" name="rent_min">
+                    <option value="-1" selected>Any</option>
+                    <option value="100">$100</option>
+                    <option value="125">$125</option>
                     <option value="150">$150</option>
                     <option value="175">$175</option>
                     <option value="200">$200</option>
@@ -73,11 +68,11 @@
                     <option value="675">$675</option>
                     <option value="700">$700</option>
                 </select>
-                <label for="rentMax">Max</label>
-                <select id="rentMax" name="rentMax">
-                    <option value="0">$Any</option>
-                    <option value="100">$$100</option>
-                    <option value="125">$$125</option>
+                <label for="rent_max">Max</label>
+                <select id="rent_max" name="rent_max">
+                    <option value="-1" selected>Any</option>
+                    <option value="100">$100</option>
+                    <option value="125">$125</option>
                     <option value="150">$150</option>
                     <option value="175">$175</option>
                     <option value="200">$200</option>
@@ -106,63 +101,64 @@
 
             <fieldset>
                 <legend>Crime rate</legend>
-                <label for="crimeRateMin">Min</label>
-                <select id="crimeRateMin" name="crimeRateMin">
-                    <option value="0">$Any</option>
-                    <option value="100">$$100</option>
-                    <option value="125">$$125</option>
-                    <option value="150">$150</option>
-                    <option value="175">$175</option>
-                    <option value="200">$200</option>
-                    <option value="225">$225</option>
-                    <option value="250">$250</option>
-                    <option value="275">$275</option>
-                    <option value="300">$300</option>
-                    <option value="325">$325</option>
-                    <option value="350">$350</option>
-                    <option value="375">$375</option>
-                    <option value="400">$400</option>
-                    <option value="425">$425</option>
-                    <option value="450">$450</option>
-                    <option value="475">$475</option>
-                    <option value="500">$500</option>
-                    <option value="525">$525</option>
-                    <option value="550">$550</option>
-                    <option value="575">$575</option>
-                    <option value="600">$600</option>
-                    <option value="625">$625</option>
-                    <option value="650">$650</option>
-                    <option value="675">$675</option>
-                    <option value="700">$700</option>
+                <label for="crime_rate_min">Min</label>
+                <select id="crime_rate_min" name="crime_rate_min">
+                    <option value="-1" selected>Any</option>
+                    <option value="100">100</option>
+                    <option value="125">125</option>
+                    <option value="150">150</option>
+                    <option value="175">175</option>
+                    <option value="200">200</option>
+                    <option value="225">225</option>
+                    <option value="250">250</option>
+                    <option value="275">275</option>
+                    <option value="300">300</option>
+                    <option value="325">325</option>
+                    <option value="350">350</option>
+                    <option value="375">375</option>
+                    <option value="400">400</option>
+                    <option value="425">425</option>
+                    <option value="450">450</option>
+                    <option value="475">475</option>
+                    <option value="500">500</option>
+                    <option value="525">525</option>
+                    <option value="550">550</option>
+                    <option value="575">575</option>
+                    <option value="600">600</option>
+                    <option value="625">625</option>
+                    <option value="650">650</option>
+                    <option value="675">675</option>
+                    <option value="700">700</option>
                 </select>
-                <label for="crimeRateMax">Max</label>
-                <select id="crimeRateMax" name="crimeRateMax">
-                    <option value="0">$Any</option>
-                    <option value="100">$$100</option>
-                    <option value="125">$$125</option>
-                    <option value="150">$150</option>
-                    <option value="175">$175</option>
-                    <option value="200">$200</option>
-                    <option value="225">$225</option>
-                    <option value="250">$250</option>
-                    <option value="275">$275</option>
-                    <option value="300">$300</option>
-                    <option value="325">$325</option>
-                    <option value="350">$350</option>
-                    <option value="375">$375</option>
-                    <option value="400">$400</option>
-                    <option value="425">$425</option>
-                    <option value="450">$450</option>
-                    <option value="475">$475</option>
-                    <option value="500">$500</option>
-                    <option value="525">$525</option>
-                    <option value="550">$550</option>
-                    <option value="575">$575</option>
-                    <option value="600">$600</option>
-                    <option value="625">$625</option>
-                    <option value="650">$650</option>
-                    <option value="675">$675</option>
-                    <option value="700">$700</option>
+
+                <label for="crime_rate_max">Max</label>
+                <select id="crime_rate_max" name="crime_rate_max">
+                    <option value="-1" selected>Any</option>
+                    <option value="100">100</option>
+                    <option value="125">125</option>
+                    <option value="150">150</option>
+                    <option value="175">175</option>
+                    <option value="200">200</option>
+                    <option value="225">225</option>
+                    <option value="250">250</option>
+                    <option value="275">275</option>
+                    <option value="300">300</option>
+                    <option value="325">325</option>
+                    <option value="350">350</option>
+                    <option value="375">375</option>
+                    <option value="400">400</option>
+                    <option value="425">425</option>
+                    <option value="450">450</option>
+                    <option value="475">475</option>
+                    <option value="500">500</option>
+                    <option value="525">525</option>
+                    <option value="550">550</option>
+                    <option value="575">575</option>
+                    <option value="600">600</option>
+                    <option value="625">625</option>
+                    <option value="650">650</option>
+                    <option value="675">675</option>
+                    <option value="700">700</option>
                 </select>
             </fieldset>
 
