@@ -80,7 +80,13 @@
                     card's content.</p>
                 <p style="font-size: 10px">Crime Rate: {{suburb.crime_rate}}</p>
                 <p style="font-size: 10px">Average Rent: {{suburb.rent}}$ per week</p>
-                <a href="{% url 'info' %}" class="btn btn-primary">Suburb detail</a>
+                <form action="{% url 'info' %}" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-primary" name="suburb_name" value="{{suburb.name}}">Suburb detail</button>
+<!--                     
+                    <input type="submit" name="suburb_name" value="{{suburb.name}}">
+                    <a href="{% url 'info' %}" class="btn btn-primary">Suburb detail</a> -->
+                </form>
             </div>
         </div>
     </div>
