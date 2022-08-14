@@ -48,4 +48,21 @@ def list(request):
 
 
 def info(request):
-    return render(request, "best_suburb/info.html")
+    ##1. get the user click suburb
+    ##2. serach the suburb name from database
+    ##3. display the information of suburb
+
+    context={}
+    ##now is string,after have database,it need to change it to int
+    primary_key=request.POST.get("primary_id")
+
+    context["sub_id"]=primary_key
+    context["sub_name"] = primary_key
+    context["sub_postcode"] = primary_key
+    context["sub_city"] = primary_key
+    context["sub_aver_rent"] = primary_key
+    context["sub_crime_rate"] = primary_key
+
+
+
+    return render(request, "best_suburb/info.html",context)
