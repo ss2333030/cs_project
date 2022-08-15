@@ -99,7 +99,7 @@ def get_char():
 
             .set_global_opts(
             title_opts=opts.TitleOpts(title="   Clayton crime rate in ten year"),
-            tooltip_opts=opts.TooltipOpts(trigger="axis",formatter='{b}:{d}%'),
+            tooltip_opts=opts.TooltipOpts(trigger="axis"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
                 name="Crime rate(Percentage%)",
