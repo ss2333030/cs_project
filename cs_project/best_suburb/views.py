@@ -1,6 +1,12 @@
 from http.client import HTTPResponse
 from os import lstat
 from django.shortcuts import render
+from pyecharts import options as opts
+from pyecharts.charts import Bar,Line
+from pyecharts import options as opts
+import pyecharts.options as opts
+from pyecharts.charts import Line
+from pyecharts.faker import Faker
 
 
 class Suburb:
@@ -56,13 +62,57 @@ def info(request):
     ##now is string,after have database,it need to change it to int
     primary_key=request.POST.get("primary_id")
 
-    context["sub_id"]=primary_key
-    context["sub_name"] = primary_key
-    context["sub_postcode"] = primary_key
-    context["sub_city"] = primary_key
-    context["sub_aver_rent"] = primary_key
-    context["sub_crime_rate"] = primary_key
+    context["sub_id"]=primary_key      #get form sql database
+    context["sub_name"] = primary_key       #get form sql database
+    context["sub_postcode"] = "3100"     #get form sql database
+    context["sub_city"] = "Victoria"     #get form sql database
+    context["sub_aver_rent"] ="700"     #get form sql database
+    context["sub_crime_rate"] = "10.2"     #get form sql database
+    context["distance"]="5"     #get form googlemap
+    context["have_transport"]="No"      #get form sql database
+    school_name="Monash"
+    suburbs_name="Clayton"
 
+    myechar = get_char()
+    context["char"]=myechar.render_embed()
 
 
     return render(request, "best_suburb/info.html",context)
+
+def get_char():
+    x_data = ["2012", "2014", "2016", "2018", "2020", "2022"]
+    y_data = [2,4,6,8,3,4]
+
+    c=(
+        Line()
+            .add_xaxis(xaxis_data=x_data)
+
+            .add_yaxis(
+
+            series_name="Clayton crime rate",
+            stack="total",
+            y_axis=y_data,
+            label_opts=opts.LabelOpts(is_show=False),
+        )
+
+
+
+            .set_global_opts(
+            title_opts=opts.TitleOpts(title="   Clayton crime rate in ten year"),
+            tooltip_opts=opts.TooltipOpts(trigger="axis",formatter='{b}:{d}%'),
+            yaxis_opts=opts.AxisOpts(
+                type_="value",
+                name="Crime rate(Percentage%)",
+
+
+
+                axistick_opts=opts.AxisTickOpts(is_show=True),
+                splitline_opts=opts.SplitLineOpts(is_show=True),
+                axislabel_opts=opts.LabelOpts(formatter="{value}%")
+            ),
+            xaxis_opts=opts.AxisOpts(type_="category",
+                                     name="Years",boundary_gap=False),
+        )
+
+    )
+    return c
