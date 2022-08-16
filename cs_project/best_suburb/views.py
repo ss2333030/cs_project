@@ -44,7 +44,7 @@ def list(request):
 
         return render(request, "best_suburb/list.html", {"qualified_suburbs": qualified_suburbs})
 
-    return render(request, "best_suburb/list.html"  )
+    return render(request, "best_suburb/list.html")
 
 
 def info(request):
