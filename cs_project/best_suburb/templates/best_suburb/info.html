@@ -22,65 +22,57 @@
             </form>>
         </div> -->
 
+
 <div style="position:fixed; left:80px; top:135px;">
-    <img src="{% static 'best_suburb/suburb.png' %}" alt="Inforsuburb" width="700">
+    <p> </p>
+    <img src="{% static 'best_suburb/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
 </div>
 
-<div style="position:fixed; left:80px; top:480px;">
 
-    <body>Suburb</body>
-</div>
-<div style="position:fixed; left:80px; top:510px;">
-    <h3>Clayton</h3>
+<div style="position:fixed; left:80px; top:590px;">
+    <h3>{{sub_id}}</h3>
 </div>
 
-<div style="position:fixed; left:80px; top:550px;">
+<div style="position:fixed; left:80px; top:630px;">
     <img src="{% static 'best_suburb/location icon.png' %}" alt="location icon" width="30">
 </div>
 
-<div style="position:fixed; left:120px; top:555px;">
-    <p>Clayton - 3168，Victoria</p>
+<div style="position:fixed; left:120px; top:635px;">
+    <p>{{sub_id}} - {{sub_postcode}}，{{sub_city}}</p>
 </div>
 
-<div style="position:fixed; left:410px; top:555px;">
-    <p>$650/per week</p>
-</div>
 
-<div style="position:fixed; left:410px; top:520px;">
 
-    <body>Price</body>
-</div>
-
-<div class="Facility" style="position:fixed; left:80px; top:590px;">
+<div class="Facility" style="position:fixed; left:80px; top:670px;">
     <h4>Facility</h4>
 </div>
-<div style="position:fixed; left:80px; top:640px;">
+<div style="position:fixed; left:80px; top:720px;">
 
-    <body>Crime rate:8.2%</body>
+    <body>Crime rate: {{sub_crime_rate}}%</body>
 </div>
-<div style="position:fixed; left:380px; top:640px;">
+<div style="position:fixed; left:380px; top:720px;">
 
-    <body>Distance from school:2.5km</body>
+    <body>Distance from school: {{distance}}m</body>
 </div>
-<div style="position:fixed; left:80px; top:670px;">
+<div style="position:fixed; left:80px; top:750px;">
 
-    <body>Average Rent:$650/pre week</body>
+    <body>Average Rent: ${{sub_aver_rent}}/pre week</body>
 </div>
-<div style="position:fixed; left:380px; top:670px;">
+<div style="position:fixed; left:380px; top:750px;">
 
-    <body>Public transport access to univerisity:Yes</body>
+    <body>Public transport access to univerisity: {{have_transport}}</body>
 </div>
-<div style="position:fixed; left:80px; top:700px;">
+<div style="position:fixed; left:80px; top:780px;">
     <h3>Add the most traveled places to see transport availability</h3>
 </div>
-<div style="position:fixed; left:1200px; top:150px;">
-    <img src="{% static 'best_suburb/Crime rate in Clayton.png' %}" alt="Crime rate in Clayton" width="550">
+<div style="position:fixed; left:930px; top:140px;">
+    <p>{{char|safe}}</p>
 </div>
-<div style="position:fixed; left:1200px; top:550px;">
+<div style="position:fixed; left:1200px; top:700px;">
     <img src="{% static 'best_suburb/Average rent in clayton.png' %}" alt="Average rent in clayton" width="550">
 </div>
 
-<div class="container" style="position:fixed; left:80px; top:760px;">
+<div class="container" style="position:fixed; left:80px; top:850px;">
     <table class="_table">
         <thead>
             <tr>

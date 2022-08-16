@@ -70,7 +70,7 @@
 
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for suburb in qualified_suburbs %}
+    {% for suburb in suburbs %}
     <div class="col">
         <div class="card h-100" style="width: 20rem;">
             <img src="{% static 'best_suburb/suburb.png' %}" class="card-img" alt="">
@@ -82,8 +82,8 @@
                 <p style="font-size: 10px">Average Rent: {{suburb.rent}}$ per week</p>
                 <form action="{% url 'info' %}" method="post">
                     {% csrf_token %}
-                    <button type="button" class="btn btn-primary" name="suburb_name" value="{{suburb.name}}">Suburb detail</button>
-<!--                     
+                    <button onlick= "{% static 'best_suburb/info.html' %}"class="btn btn-primary" id="primary_id" name="primary_id" value="{{suburb.name}}">Suburb detail</button>
+<!--
                     <input type="submit" name="suburb_name" value="{{suburb.name}}">
                     <a href="{% url 'info' %}" class="btn btn-primary">Suburb detail</a> -->
                 </form>
