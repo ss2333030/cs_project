@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Suburb</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/jquery.range.css">
+    <script src="./js/jquery.range.js"></script>
+</head>
+<body style="width: 100vw; height: 100vh;">
+    <div class="top-wrapper">
+        <div class="logo">
+            <img src="" alt="">
+            <div class="logo-title">
+                <p>BEST</p>
+                <p>SUBURB</p>
+            </div>
+        </div>
+        <div class="prefix-search-combination">
+            <div class="combination-prefix-item">
+                <i class="fa fa-search" aria-hidden="true"></i> 
+            </div>
+            <input class="combination-search-item" type="text" placeholder="Search suburb for other university">
+        </div>
+    </div>
+    <div class="content-wrapper2">
+        <div class="drop-down-wrapper">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Rent&nbsp;&nbsp;|&nbsp;&nbsp;Lower than $500 <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li style="padding: 25px;">
+                        <input type="hidden" value="0, 80" id="rentRate"  class="slider-input"/>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Distance to University&nbsp;&nbsp;|&nbsp;&nbsp;Lower than 5km <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li style="padding: 25px;">
+                        <input type="hidden" value="0, 80" id="universityRate"  class="slider-input"/>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Crime Rate&nbsp;&nbsp;|&nbsp;&nbsp;Lower than 10% <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                <li style="padding: 25px;">
+                    <input type="hidden" value="0, 80" id="rangeCrimeRate"  class="slider-input"/>
+                </li>
+                </ul>
+            </div>
+        </div>
+        <div class="list">
+            <div class="item">
+                <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
+                <div>
+                    <p class="midnight-express">Armadlate</p>
+                    <p class="grey">
+                        <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
+                        Victoria&nbsp;
+                        <span class="distance">
+                            3143
+                        </span>
+                    </p>
+                    <p class="text-right">
+                        Crime Rate:&nbsp;9.3%
+                    </p>
+                    <p class="text-right">
+                        Average Rent: $775/pre week
+                    </p>
+                </div>
+            </div>
+            <div class="item">
+                <img src="https://gss0.baidu.com/-Po3dSag_xI4khGko9WTAnF6hhy/zhidao/pic/item/83025aafa40f4bfbe0367bee044f78f0f63618a1.jpg" alt="">
+                <div>
+                    <p class="midnight-express">Armadlate</p>
+                    <p class="grey">
+                        <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
+                        Victoria&nbsp;
+                        <span class="distance">
+                            3143
+                        </span>
+                    </p>
+                    <p class="text-right">
+                        Crime Rate:&nbsp;9.3%
+                    </p>
+                    <p class="text-right">
+                        Average Rent: $775/pre week
+                    </p>
+                </div>
+            </div>
+            <div class="item">
+                <img src="https://ts1.cn.mm.bing.net/th/id/R-C.8199a4753b3fcbb1ad57896a061b7190?rik=S%2bpSqyalJmzeWw&riu=http%3a%2f%2fwww.rrzxw.net%2fuploads%2fallimg%2f171207%2f212G22352-6.jpg&ehk=woRU4cC268ki30wK%2bwYz9%2blcogkt81wAcOqFHobXizQ%3d&risl=&pid=ImgRaw&r=0" alt="">
+                <div>
+                    <p class="midnight-express">Armadlate</p>
+                    <p class="grey">
+                        <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
+                        Victoria&nbsp;
+                        <span class="distance">
+                            3143
+                        </span>
+                    </p>
+                    <p class="text-right">
+                        Crime Rate:&nbsp;9.3%
+                    </p>
+                    <p class="text-right">
+                        Average Rent: $775/pre week
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $('.slider-input').jRange({
+                    from: 0,   				//滑块范围的初始值
+                    to: 80,    				//滑块范围的终止值
+                    step: 1,   				//设置步长
+                    scale: [0,20,40,60,80], //滑动条下方的尺度变标签
+                    format: '%s',  			//数值格式
+                    width: 200, 			//进度条的宽度
+                    showLabels: true,  		//是否显示滑动条下方的尺寸标签
+                    showScale: true,  		//是否显示滑块上方的数值标签
+                    isRange: true,     		//是否为选取范围
+                    onstatechange: function(e){    //滑块范围改变时触发的方法
+                        console.log(e);
+                    }
+                });
+                
+            $('.slider-input').jRange('setValue', '25, 50');  //滑块赋值
+      });
+        
+
+    </script>
+</body>
+</html>
+
+    
+    
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
