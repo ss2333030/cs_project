@@ -22,19 +22,3 @@ function remove_tr(This) {
         This.closest('tr').remove();
     }
 }
-
-// function updateResults() {
-//     let distance = document.querySelector('#distance');
-//     let rent = document.querySelector('#rent');
-//     let crime_rate = document.querySelector('#crime_rate');
-
-//     let response = await fetch('/search?distance=' + distance.value);
-//     let shows = await response.json();
-//     let html = '';
-//     for (let id in shows) {
-//         let title = shows[id].title.replace('<', '&lt;').replace('&', '&amp;');
-//         html += '<li>' + title + '</li>';
-//     }
-//     document.querySelector('ul').innerHTML = html;
-
-// }
