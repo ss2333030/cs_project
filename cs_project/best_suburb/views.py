@@ -57,6 +57,7 @@ def index(request):
     """Request handler for the path "/". This function will be called whenever the client requests the path "/"."""
 
     # This returns the page "index.html"
+
     return render(request, "best_suburb/index.html")
 
 
