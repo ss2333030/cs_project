@@ -8,7 +8,7 @@ import pyecharts.options as opts
 from pyecharts.charts import Line
 from pyecharts.faker import Faker
 from django.http import JsonResponse
-
+from .models import Suburb,University
 
 s1 = {
     "name": "Clayton",
