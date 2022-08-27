@@ -7,5 +7,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("list", views.list, name="list"),
     path("info", views.info, name="info"),
+    #path("addUni/",views.addUni),
     # path("search", views.search, name="search"),
 ]

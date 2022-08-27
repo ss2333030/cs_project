@@ -1,4 +1,6 @@
+from ast import Sub
 from http.client import HTTPResponse
+import imp
 from os import lstat
 from django.shortcuts import render
 from pyecharts import options as opts
@@ -9,6 +11,19 @@ from pyecharts.charts import Line
 from pyecharts.faker import Faker
 from django.http import JsonResponse
 from .models import Suburb,University
+from best_suburb import models
+from django.shortcuts import render,HttpResponse
+
+def addUni(request):
+    University = models.University(name="MMM",suburbname="Sname",location = "33,33")
+    University.save()
+    return HttpResponse("<p>Success<p>")
+
+def search():
+    PrintSuburb = models.Suburb.objects.all()
+    for i in PrintSuburb:
+        print(i.crime_rate)
+    return 0
 
 s1 = {
     "name": "Clayton",
@@ -62,6 +77,7 @@ def index(request):
 
 
 def list(request):
+    #search()
     """Request handler for the path "/list". This function will be called whenever the client requests the path "/list"."""
     if request.method == "POST":
         return render(
