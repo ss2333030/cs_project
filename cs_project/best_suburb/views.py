@@ -134,7 +134,7 @@ def info(request):
 
     context = {}
     ##now is string,after have database,it need to change it to int
-    primary_key = request.POST.get("primary_id")
+    primary_key = request.GET.get("name")
 
     context["sub_id"] = primary_key  # get form sql database
     context["sub_name"] = primary_key  # get form sql database
@@ -150,7 +150,7 @@ def info(request):
     myechar = get_char()
     context["char"] = myechar.render_embed()
 
-    return render(request, "best_suburb/info.html", context)
+    return render(request, "best_suburb/info.html", {"suburb": models.Suburb.objects.filter(lambda e: e.name == request.GET.get("name"))})
 
 
 def get_char():

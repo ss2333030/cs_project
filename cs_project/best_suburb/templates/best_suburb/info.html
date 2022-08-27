@@ -30,7 +30,7 @@
 
 
 <div style="position:fixed; left:80px; top:590px;">
-    <h3>{{sub_id}}</h3>
+    <h3>{{ suburb.name }}</h3>
 </div>
 
 <div style="position:fixed; left:80px; top:630px;">
@@ -38,7 +38,7 @@
 </div>
 
 <div style="position:fixed; left:120px; top:635px;">
-    <p>{{sub_id}} - {{sub_postcode}}，{{sub_city}}</p>
+    <p>{{subur.name}} - {{suburb.postcode}}，{{suburb.location}}</p>
 </div>
 
 
@@ -48,19 +48,19 @@
 </div>
 <div style="position:fixed; left:80px; top:720px;">
 
-    <body>Crime rate: {{sub_crime_rate}}%</body>
+    <body>Crime rate: {{suburb.crime_rate}}%</body>
 </div>
 <div style="position:fixed; left:380px; top:720px;">
 
-    <body>Distance from school: {{distance}}m</body>
+    <body>Distance from school: {{suburb.average_rent}}m</body>
 </div>
 <div style="position:fixed; left:80px; top:750px;">
 
-    <body>Average Rent: ${{sub_aver_rent}}/pre week</body>
+    <body>Average Rent: ${{suburb.average_rent}}/pre week</body>
 </div>
 <div style="position:fixed; left:380px; top:750px;">
 
-    <body>Public transport access to univerisity: {{have_transport}}</body>
+    <body>Public transport access to univerisity: None</body>
 </div>
 <div style="position:fixed; left:80px; top:780px;">
     <h3>Add the most traveled places to see transport availability</h3>

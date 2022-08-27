@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Suburb</title>
     <!-- <link rel="stylesheet" href="./css/style.css"> -->
@@ -84,25 +85,27 @@
         </div>
         <div class="list">
             {% for suburb in suburbs %}
-            <div class="item">
-                <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
-                <div>
-                    <p class="midnight-express">{{ suburb.name }}</p>
-                    <p class="grey">
-                        <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
-                        {{ suburb.state }}&nbsp;
-                        <span class="distance">
-                            {{ suburb.postcode }}
-                        </span>
-                    </p>
-                    <p class="text-right">
-                        Crime Rate:&nbsp;{{ suburb.crime_rate }}%
-                    </p>
-                    <p class="text-right">
-                        Average Rent: ${{ suburb.rent }}/per week
-                    </p>
+            <a href="/info?name={{ suburb.name }}" id="suburb_card">
+                <div class="item">
+                    <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
+                    <div>
+                        <p class="midnight-express">{{ suburb.name }}</p>
+                        <p class="grey">
+                            <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
+                            {{ suburb.state }}&nbsp;
+                            <span class="distance">
+                                {{ suburb.postcode }}
+                            </span>
+                        </p>
+                        <p class="text-right">
+                            Crime Rate:&nbsp;{{ suburb.crime_rate }}%
+                        </p>
+                        <p class="text-right">
+                            Average Rent: ${{ suburb.rent }}/per week
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>
