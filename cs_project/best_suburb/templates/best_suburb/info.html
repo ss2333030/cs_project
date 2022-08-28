@@ -1,10 +1,8 @@
 {% extends "best_suburb/layout.html" %}
 {% block body %}
 {% load static %}
-<img class="logo" src="{% static 'best_suburb/logo.png' %}" alt="" width="135" height="60">
+<img class="logo" src="{% static 'best_suburb/images/logo.png' %}" alt="" width="135" height="60">
 <div class="container-fluid" style="position:fixed; left:10px; top:90px;">
-
-
 
 
     <form class="d-flex" role="search" action="listpage.html">
@@ -25,7 +23,7 @@
 
 <div style="position:fixed; left:80px; top:135px;">
     <p> </p>
-    <img src="{% static 'best_suburb/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
+    <img src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
 </div>
 
 
@@ -34,11 +32,11 @@
 </div>
 
 <div style="position:fixed; left:80px; top:630px;">
-    <img src="{% static 'best_suburb/location icon.png' %}" alt="location icon" width="30">
+    <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="30">
 </div>
 
 <div style="position:fixed; left:120px; top:635px;">
-    <p>{{subur.name}} - {{suburb.postcode}}，{{suburb.location}}</p>
+    <p>{{suburb.name}} - {{suburb.postcode}}，{{suburb.location}}</p>
 </div>
 
 
@@ -48,7 +46,7 @@
 </div>
 <div style="position:fixed; left:80px; top:720px;">
 
-    <body>Crime rate: {{suburb.crime_rate}}%</body>
+    <body>Crime rate: {{suburb.crime_rate}}</body>
 </div>
 <div style="position:fixed; left:380px; top:720px;">
 
@@ -56,7 +54,7 @@
 </div>
 <div style="position:fixed; left:80px; top:750px;">
 
-    <body>Average Rent: ${{suburb.average_rent}}/pre week</body>
+    <body>Average Rent: ${{suburb.average_rent}}/per week</body>
 </div>
 <div style="position:fixed; left:380px; top:750px;">
 
@@ -69,7 +67,7 @@
     <p>{{char|safe}}</p>
 </div>
 <div style="position:fixed; left:1200px; top:700px;">
-    <img src="{% static 'best_suburb/Average rent in clayton.png' %}" alt="Average rent in clayton" width="550">
+    <img src="{% static 'best_suburb/images/Average rent in clayton.png' %}" alt="Average rent in clayton" width="550">
 </div>
 
 <div class="container" style="position:fixed; left:80px; top:850px;">

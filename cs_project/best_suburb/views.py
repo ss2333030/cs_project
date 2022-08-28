@@ -10,20 +10,23 @@ import pyecharts.options as opts
 from pyecharts.charts import Line
 from pyecharts.faker import Faker
 from django.http import JsonResponse
-from .models import Suburb,University
+from .models import Suburb, University
 from best_suburb import models
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render, HttpResponse
+
 
 def addUni(request):
-    University = models.University(name="MMM",suburbname="Sname",location = "33,33")
+    University = models.University(name="MMM", suburbname="Sname", location="33,33")
     University.save()
     return HttpResponse("<p>Success<p>")
+
 
 def search():
     PrintSuburb = models.Suburb.objects.all()
     for i in PrintSuburb:
         print(i.crime_rate)
     return 0
+
 
 s1 = {
     "name": "Clayton",
@@ -77,7 +80,7 @@ def index(request):
 
 
 def list(request):
-    #search()
+    # search()
     """Request handler for the path "/list". This function will be called whenever the client requests the path "/list"."""
     if request.method == "POST":
         return render(
@@ -96,10 +99,11 @@ def get_qualified_suburbs(request):
     # if the client has filled out the form on the homepage
     # Functions used to convert the input value to its correct value
     UNDEFINED = "-1"
+    INFINITY = 100000000
 
     correct_value = lambda value: UNDEFINED if value is None or value == "" else value
     correct_min = lambda x: 0 if x < 0 else x
-    correct_max = lambda x: float("inf") if x < 0 else x
+    correct_max = lambda x: INFINITY if x < 0 else x
 
     # Get the values
     uni_name = correct_value(request.POST.get("uni_name"))
@@ -107,23 +111,16 @@ def get_qualified_suburbs(request):
     distance_max = correct_max(int(correct_value(request.POST.get("distance_max"))))
     rent_min = correct_min(int(correct_value(request.POST.get("rent_min"))))
     rent_max = correct_max(int(correct_value(request.POST.get("rent_max"))))
-    crime_rate_min = correct_min(int(correct_value(request.POST.get("crime_rate_min"))))
     crimte_rate_max = correct_max(
         int(correct_value(request.POST.get("crime_rate_max")))
     )
 
-    # Function used to filter out unqualified suburbs
-    filter = (
-        lambda lst, f: lst
-        if len(lst) == 0
-        else ([lst[0]] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:], f))
-    )
-
-    return filter(
-        suburbs,
-        lambda e: distance_min <= e["distance"] <= distance_max
-        and rent_min <= e["rent"] <= rent_max
-        and crime_rate_min <= e["crime_rate"] <= crimte_rate_max,
+    return models.Suburb.objects.filter(
+        # distance__gte=distance_min,
+        # distance__lte=distance_max,
+        average_rent__gte=rent_min,
+        average_rent__lte=rent_max,
+        crime_rate__lte=crimte_rate_max,
     )
 
 
@@ -132,24 +129,27 @@ def info(request):
     ##2. serach the suburb name from database
     ##3. display the information of suburb
 
-    context = {}
+    #context = {}
     ##now is string,after have database,it need to change it to int
 
     # context["sub_id"] = primary_key  # get form sql database
     # context["sub_name"] = primary_key  # get form sql database
-    context["sub_postcode"] = "3100"  # get form sql database
-    context["sub_city"] = "Victoria"  # get form sql database
-    context["sub_aver_rent"] = "700"  # get form sql database
-    context["sub_crime_rate"] = "10.2"  # get form sql database
-    context["distance"] = "5"  # get form googlemap
-    context["have_transport"] = "No"  # get form sql database
-    school_name = "Monash"
-    suburbs_name = "Clayton"
+    # context["sub_postcode"] = "3100"  # get form sql database
+    # context["sub_city"] = "Victoria"  # get form sql database
+    # context["sub_aver_rent"] = "700"  # get form sql database
+    # context["sub_crime_rate"] = "10.2"  # get form sql database
+    # context["distance"] = "5"  # get form googlemap
+    # context["have_transport"] = "No"  # get form sql database
+    # school_name = "Monash"
+    # suburbs_name = "Clayton"
 
-    myechar = get_char()
-    context["char"] = myechar.render_embed()
-
-    return render(request, "best_suburb/info.html", {"suburb": models.Suburb.objects.filter(name = request.GET.get("name"))})
+    # myechar = get_char()
+    # context["char"] = myechar.render_embed()
+    return render(
+        request,
+        "best_suburb/info.html",
+        {"suburb": models.Suburb.objects.get(name=request.GET.get("name"))},
+    )
 
 
 def get_char():

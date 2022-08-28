@@ -85,7 +85,7 @@
         </div>
         <div class="list">
             {% for suburb in suburbs %}
-            <a href="/info?name={{ suburb.name }}" id="suburb_card">
+            <a href="/info?name={{ suburb.name }}" id="suburb_card" style="text-decoration: none">
                 <div class="item">
                     <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
                     <div>
@@ -98,10 +98,10 @@
                             </span>
                         </p>
                         <p class="text-right">
-                            Crime Rate:&nbsp;{{ suburb.crime_rate }}%
+                            Crime Rate:&nbsp;{{ suburb.crime_rate }}
                         </p>
                         <p class="text-right">
-                            Average Rent: ${{ suburb.rent }}/per week
+                            Average Rent: ${{ suburb.average_rent }}/per week
                         </p>
                     </div>
                 </div>
