@@ -180,10 +180,29 @@ body {
     display: flex;
     justify-content: space-around;
 }
+.suburb-image {
+    padding-left: 100px;
+    padding-top: 50px;
+}
 
+.col-sm-9 {
+    
+    padding-top: 40px;
+}
+
+.col-sm-3 {
+    padding-left: 120px;
+    padding-top: 30px;
+}
 .list {
     display: flex;
     flex-wrap: wrap;
+}
+
+.chart {
+   width: 200px;
+   height: 400px;
+   padding-left: 150px;
 }
 
 .item img {
@@ -191,6 +210,15 @@ body {
     height: 50%;
     border-radius: 20px;
     margin-bottom: 10px;
+}
+
+.Facility {
+    padding-left: 110px;
+}
+
+.suburb-info {
+    padding-left: 160px;
+
 }
 
 .list .item {
@@ -209,3 +237,4 @@ body {
 #suburb_card:hover {
     text-decoration: none;
 }
+
