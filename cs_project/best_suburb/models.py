@@ -3,6 +3,13 @@ from django.db import models
 # class Suburb(models.Model):
 
 # Create your models here.
+
+from django.db import models
+class UserInfo(models.Model):
+    username = models.CharField(max_length=32)
+    password = models.CharField(max_length=32)
+    age = models.IntegerField()
+
 class University(models.Model):
     name = models.TextField(db_column='Name', primary_key=True)  # Field name made lowercase.
     suburbname = models.TextField(db_column='Suburbname')  # Field name made lowercase.

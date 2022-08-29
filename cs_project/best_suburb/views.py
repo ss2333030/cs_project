@@ -24,7 +24,7 @@ def addUni(request):
 def search():
     PrintSuburb = models.Suburb.objects.all()
     for i in PrintSuburb:
-        print(i.crime_rate)
+        print(i.name)
     return 0
 
 
@@ -143,12 +143,16 @@ def info(request):
     # school_name = "Monash"
     # suburbs_name = "Clayton"
 
-    # myechar = get_char()
-    # context["char"] = myechar.render_embed()
+
+    #context["char"] = myechar.render_embed()
+    myechar = get_char()
+    print("xxxx")
+    print(myechar)
+    print("aaaaa")
     return render(
         request,
         "best_suburb/info.html",
-        {"suburb": models.Suburb.objects.get(name=request.GET.get("name"))},
+        {"suburb": models.Suburb.objects.get(name=request.GET.get("name")),"char":myechar.render_embed()}
     )
 
 
@@ -181,3 +185,5 @@ def get_char():
         )
     )
     return c
+
+
