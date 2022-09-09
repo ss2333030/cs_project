@@ -22,9 +22,28 @@ class University(models.Model):
 class Suburb(models.Model):
     name = models.TextField(db_column='Name', primary_key=True)  # Field name made lowercase.
     postcode = models.IntegerField(db_column='Postcode')  # Field name made lowercase.
-    crime_rate = models.IntegerField(db_column='Crime rate')  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    average_rent = models.IntegerField(db_column='Average rent')  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    location = models.TextField(db_column='Location')  # Field name made lowercase. This field type is a guess.
+    latitude = models.TextField(db_column='Latitude', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    longitude = models.TextField(db_column='Longitude')  # Field name made lowercase. This field type is a guess.
+    averagerent_in_2013 = models.TextField(db_column='Averagerent in 2013')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2014 = models.IntegerField(db_column='Averagerent in 2014')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2015 = models.IntegerField(db_column='Averagerent in 2015')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2016 = models.IntegerField(db_column='Averagerent in 2016')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2017 = models.IntegerField(db_column='Averagerent in 2017')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2018 = models.IntegerField(db_column='Averagerent in 2018')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2019 = models.IntegerField(db_column='Averagerent in 2019')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2020 = models.IntegerField(db_column='Averagerent in 2020')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2021 = models.IntegerField(db_column='Averagerent in 2021')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    averagerent_in_2022 = models.IntegerField(db_column='Averagerent in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2013 = models.IntegerField(db_column='Crime rate in 2013')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2014 = models.IntegerField(db_column='Crime rate in 2014')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2015 = models.IntegerField(db_column='Crime rate in 2015')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2016 = models.IntegerField(db_column='Crime rate in 2016')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2017 = models.IntegerField(db_column='Crime rate in 2017')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2018 = models.IntegerField(db_column='Crime rate in 2018')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2019 = models.IntegerField(db_column='Crime rate in 2019')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2020 = models.IntegerField(db_column='Crime rate in 2020')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2021 = models.IntegerField(db_column='Crime rate in 2021')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate_in_2022 = models.IntegerField(db_column='Crime rate in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
     class Meta:
         managed = False
