@@ -13,6 +13,57 @@ from django.http import JsonResponse
 from .models import Suburb, University
 from best_suburb import models
 from django.shortcuts import render, HttpResponse
+import requests
+import math
+
+URL = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Washington%2C%20DC&destinations=New%20York%20City%2C%20NY&units=imperial&key=AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
+
+payload = {}
+headers = {}
+
+response = requests.request("GET", URL, headers=headers, data=payload)
+
+print(response.text)
+
+
+class Location:
+    def __init__(self, latitude, longitude):
+        self.latitude = latitude
+        self.longitude = longitude
+
+    def get_latitiude(self):
+        return self.latitude
+
+    def get_longitude(self):
+        return self.longitude
+
+
+def haversine_distance(l1: Location, l2: Location):
+    R = 6371.0710
+    # Radius of the Earth in miles
+    rlat1 = l1.latitude * (math.pi / 180)
+    # Convert degrees to radians
+    rlat2 = l2.latitude * (math.pi / 180)
+    # Convert degrees to radians
+    difflat = rlat2 - rlat1
+    # Radian difference (latitudes)
+    difflon = (l2.longitude - l1.longitude) * (math.pi / 180)
+    # Radian difference (longitudes)
+
+    d = (
+        2
+        * R
+        * math.asin(
+            math.sqrt(
+                math.sin(difflat / 2) * math.sin(difflat / 2)
+                + math.cos(rlat1)
+                * math.cos(rlat2)
+                * math.sin(difflon / 2)
+                * math.sin(difflon / 2)
+            )
+        )
+    )
+    return d
 
 
 def addUni(request):
@@ -26,46 +77,6 @@ def search():
     for i in PrintSuburb:
         print(i.name)
     return 0
-
-
-s1 = {
-    "name": "Clayton",
-    "postcode": "3168",
-    "state": "Victoria",
-    "distance": 1,
-    "crime_rate": 1,
-    "rent": 200,
-}
-s2 = {
-    "name": "Malvern East",
-    "postcode": "3145",
-    "Victoria": "Victoria",
-    "distance": 10,
-    "crime_rate": 1,
-    "rent": 300,
-}
-s3 = {
-    "name": "Oakleigh East",
-    "postcode": "3166",
-    "Victoria": "Victoria",
-    "distance": 3,
-    "crime_rate": 1,
-    "rent": 210,
-}
-s4 = {
-    "name": "Caufield",
-    "postcode": "3150",
-    "state": "Victoria",
-    "distance": 7,
-    "crime_rate": 1,
-    "rent": 200,
-}
-
-suburbs = []
-suburbs.append(s1)
-suburbs.append(s2)
-suburbs.append(s3)
-suburbs.append(s4)
 
 
 # Create your views here.
@@ -90,7 +101,7 @@ def list(request):
         )
 
     # if the client accesses this path directly without filling the form, send all suburbs to the client
-    return render(request, "best_suburb/list.html", {"suburbs": suburbs})
+    return render(request, "best_suburb/list.html", {"suburbs": []})
 
 
 def get_qualified_suburbs(request):
@@ -106,7 +117,7 @@ def get_qualified_suburbs(request):
     correct_max = lambda x: INFINITY if x < 0 else x
 
     # Get the values
-    uni_name = correct_value(request.POST.get("uni_name"))
+    uni_name = request.POST.get("uni_name")
     distance_min = correct_min(int(correct_value(request.POST.get("distance_min"))))
     distance_max = correct_max(int(correct_value(request.POST.get("distance_max"))))
     rent_min = correct_min(int(correct_value(request.POST.get("rent_min"))))
@@ -115,13 +126,37 @@ def get_qualified_suburbs(request):
         int(correct_value(request.POST.get("crime_rate_max")))
     )
 
-    return models.Suburb.objects.filter(
-        # distance__gte=distance_min,
-        # distance__lte=distance_max,
+    university = models.University.objects.filter(name=uni_name).values()
+    suburbs = models.Suburb.objects.filter(
         average_rent__gte=rent_min,
         average_rent__lte=rent_max,
         crime_rate__lte=crimte_rate_max,
     )
+
+    def condition(e):
+        l1 = Location(e.latitude, e.longitude)
+        l2 = Location(university.latitude, university.longitude)
+        return distance_min <= haversine_distance(l1, l2) <= distance_max
+
+    def filter(lst, f):
+        return (
+            lst
+            if len(lst) == 0
+            else (lst[0] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:]))
+        )
+    return filter(suburbs, condition)
+
+
+    # university = models.University.objects.filter(name=uni_name).values()
+    # uni_location = Location(university.latitude, university.longitude)
+
+    # return models.Suburb.objects.filter(
+    #     # distance__gte=distance_min,
+    #     # distance__lte=distance_max,
+    #     average_rent__gte=rent_min,
+    #     average_rent__lte=rent_max,
+    #     crime_rate__lte=crimte_rate_max,
+    # )
 
 
 def info(request):
@@ -129,7 +164,7 @@ def info(request):
     ##2. serach the suburb name from database
     ##3. display the information of suburb
 
-    #context = {}
+    # context = {}
     ##now is string,after have database,it need to change it to int
 
     # context["sub_id"] = primary_key  # get form sql database
@@ -143,8 +178,7 @@ def info(request):
     # school_name = "Monash"
     # suburbs_name = "Clayton"
 
-
-    #context["char"] = myechar.render_embed()
+    # context["char"] = myechar.render_embed()
     myechar = get_char()
     print("xxxx")
     print(myechar)
@@ -152,7 +186,10 @@ def info(request):
     return render(
         request,
         "best_suburb/info.html",
-        {"suburb": models.Suburb.objects.get(name=request.GET.get("name")),"char":myechar.render_embed()}
+        {
+            "suburb": models.Suburb.objects.get(name=request.GET.get("name")),
+            "char": myechar.render_embed(),
+        },
     )
 
 
@@ -185,5 +222,3 @@ def get_char():
         )
     )
     return c
-
-
