@@ -13,7 +13,8 @@ class UserInfo(models.Model):
 class University(models.Model):
     name = models.TextField(db_column='Name', primary_key=True)  # Field name made lowercase.
     suburbname = models.TextField(db_column='Suburbname')  # Field name made lowercase.
-    location = models.TextField(db_column='Location', unique=True)  # Field name made lowercase. This field type is a guess.
+    latitude = models.TextField(db_column='Latitude', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    longitude = models.TextField(db_column='Longitude', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
 
     class Meta:
         managed = False
