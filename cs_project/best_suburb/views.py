@@ -161,7 +161,7 @@ def get_char():
     y_data = [2, 4, 6, 8, 3, 4]
 
     c = (
-        Line()
+        Line(init_opts=opts.InitOpts(width='750px', height='400px'))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
             series_name="Clayton crime rate",
