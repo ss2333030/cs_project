@@ -75,7 +75,9 @@ body {
 .logo {
     padding: 20px;
 }
-
+.list{
+ line-height:30px;
+}
 .logo-title {
     color: #4190EC;
     font-weight: 700;
@@ -183,6 +185,9 @@ body {
 .suburb-image {
     padding-left: 100px;
     padding-top: 50px;
+    border-radius: 30px;
+
+
 }
 
 .col-sm-9 {

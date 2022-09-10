@@ -16,38 +16,29 @@ from django.shortcuts import render, HttpResponse
 import requests
 import math
 
-URL = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Washington%2C%20DC&destinations=New%20York%20City%2C%20NY&units=imperial&key=AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
-
-payload = {}
-headers = {}
-
-response = requests.request("GET", URL, headers=headers, data=payload)
-
-print(response.text)
-
 
 class Location:
     def __init__(self, latitude, longitude):
-        self.latitude = latitude
-        self.longitude = longitude
+        self.__latitude = latitude
+        self.__longitude = longitude
 
     def get_latitiude(self):
-        return self.latitude
+        return self.__latitude
 
     def get_longitude(self):
-        return self.longitude
+        return self.__longitude
 
 
 def haversine_distance(l1: Location, l2: Location):
     R = 6371.0710
     # Radius of the Earth in miles
-    rlat1 = l1.latitude * (math.pi / 180)
+    rlat1 = l1.get_latitiude() * (math.pi / 180)
     # Convert degrees to radians
-    rlat2 = l2.latitude * (math.pi / 180)
+    rlat2 = l2.get_latitiude() * (math.pi / 180)
     # Convert degrees to radians
     difflat = rlat2 - rlat1
     # Radian difference (latitudes)
-    difflon = (l2.longitude - l1.longitude) * (math.pi / 180)
+    difflon = (l2.get_longitude() - l1.get_longitude()) * (math.pi / 180)
     # Radian difference (longitudes)
 
     d = (
@@ -101,7 +92,11 @@ def list(request):
         )
 
     # if the client accesses this path directly without filling the form, send all suburbs to the client
-    return render(request, "best_suburb/list.html", {"suburbs": []})
+    return render(
+        request,
+        "best_suburb/list.html",
+        {"suburbs": models.Suburb.objects.all().values()},
+    )
 
 
 def get_qualified_suburbs(request):
@@ -126,37 +121,41 @@ def get_qualified_suburbs(request):
         int(correct_value(request.POST.get("crime_rate_max")))
     )
 
-    university = models.University.objects.filter(name=uni_name).values()
+    # Get the university
+    university = models.University.objects.filter(name=uni_name)[0]
+
+    # Get the list of qualified suburbs
     suburbs = models.Suburb.objects.filter(
         average_rent__gte=rent_min,
         average_rent__lte=rent_max,
         crime_rate__lte=crimte_rate_max,
-    )
+    ).values()
 
+    # Filter suburbs by distance
     def condition(e):
-        l1 = Location(e.latitude, e.longitude)
-        l2 = Location(university.latitude, university.longitude)
+        l1 = Location(float(e["latitude"]), float(e["longitude"]))
+        l2 = Location(float(university.latitude), float(university.longitude))
         return distance_min <= haversine_distance(l1, l2) <= distance_max
 
+    # Standard filter function
     def filter(lst, f):
         return (
             lst
             if len(lst) == 0
-            else (lst[0] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:]))
+            else ([lst[0]] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:], f))
         )
-    return filter(suburbs, condition)
 
+    def map(lst, f):
+        return lst if len(lst) == 0 else [f(lst[0])] + map(lst[1:], f)
 
-    # university = models.University.objects.filter(name=uni_name).values()
-    # uni_location = Location(university.latitude, university.longitude)
-
-    # return models.Suburb.objects.filter(
-    #     # distance__gte=distance_min,
-    #     # distance__lte=distance_max,
-    #     average_rent__gte=rent_min,
-    #     average_rent__lte=rent_max,
-    #     crime_rate__lte=crimte_rate_max,
-    # )
+    def add_property(e):
+        l1 = Location(float(e["latitude"]), float(e["longitude"]))
+        l2 = Location(float(university.latitude), float(university.longitude))
+        e["distance"] = round(haversine_distance(l1, l2),2)
+        return e
+    print(map(filter(suburbs, condition), add_property))
+    return map(filter(suburbs, condition), add_property)
+    # return filter(suburbs, condition)
 
 
 def info(request):
@@ -198,7 +197,7 @@ def get_char():
     y_data = [2, 4, 6, 8, 3, 4]
 
     c = (
-        Line()
+        Line(init_opts=opts.InitOpts(width="750px", height="400px"))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
             series_name="Clayton crime rate",

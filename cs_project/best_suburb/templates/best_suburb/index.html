@@ -16,6 +16,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
+    <script src="{% static 'best_suburb/javascript/index.js' %}"></script>
+
     <!-- <link rel="stylesheet" href="./css/style.css"> -->
     <!-- Django's specific syntax for linking files -->
     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
@@ -40,9 +42,10 @@
             {% csrf_token %}
             <div class="wrapper center">
                 <div class="university-wrapper">
-                    <input type="text" class="university" placeholder="Enter Your University Name" name="uni_name">
+                    <input type="text" class="university" placeholder="Enter Your University Name" name="uni_name"
+                        id="uni_name">
                     <div class="filter-btn center">
-                        <button style="background-color: transparent; border: none;" type="button"
+                        <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
                             class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             <i class="fa fa-bars" aria-hidden="true"></i>
                         </button>
@@ -75,8 +78,10 @@
                 <form action="{% url 'list' %}" method="post">
                     <div class="modal-body">
                         {% csrf_token %}
+
                         <div class="form-group">
-                            <label for="RentPrice">Rent Price</label>
+                            <input type="hidden" id="uni_name_advanced" name="uni_name" value="">
+                            <label for="RentPrice">Average Price</label>
                             <div style="display: flex; padding: 10px;">
                                 <div style="margin-right: 5px;">
                                     <!-- <label>min:
@@ -96,6 +101,56 @@
                                         <option value="100">$100</option>
                                         <option value="125">$125</option>
                                         <option value="150">$150</option>
+                                        <option value="175">$175</option>
+                                        <option value="200">$200</option>
+                                        <option value="225">$225</option>
+                                        <option value="250">$250</option>
+                                        <option value="275">$275</option>
+                                        <option value="300">$300</option>
+                                        <option value="325">$325</option>
+                                        <option value="350">$350</option>
+                                        <option value="375">$375</option>
+                                        <option value="400">$400</option>
+                                        <option value="425">$425</option>
+                                        <option value="450">$450</option>
+                                        <option value="475">$475</option>
+                                        <option value="500">$500</option>
+                                        <option value="525">$525</option>
+                                        <option value="550">$550</option>
+                                        <option value="575">$575</option>
+                                        <option value="600">$600</option>
+                                        <option value="625">$625</option>
+                                        <option value="650">$650</option>
+                                        <option value="675">$675</option>
+                                        <option value="700">$700</option>
+                                        <option value="725">$725</option>
+                                        <option value="750">$750</option>
+                                        <option value="800">$800</option>
+                                        <option value="850">$850</option>
+                                        <option value="900">$900</option>
+                                        <option value="950">$950</option>
+                                        <option value="1000">$1000</option>
+                                        <option value="1100">$1100</option>
+                                        <option value="1200">$1200</option>
+                                        <option value="1300">$1300</option>
+                                        <option value="1400">$1400</option>
+                                        <option value="1500">$1500</option>
+                                        <option value="1600">$1600</option>
+                                        <option value="1700">$1700</option>
+                                        <option value="1800">$1800</option>
+                                        <option value="1900">$1900</option>
+                                        <option value="2000">$2000</option>
+                                        <option value="2500">$2500</option>
+                                        <option value="2000">$2000</option>
+                                        <option value="2500">$2500</option>
+                                        <option value="3000">$3000</option>
+                                        <option value="3500">$3500</option>
+                                        <option value="4000">$4000</option>
+                                        <option value="4500">$4500</option>
+                                        <option value="5000">$5000</option>
+                                        <option value="5500">$5500</option>
+                                        <option value="6000">$6000</option>
+                                        <option value="6500">$6500</option>
                                     </select>
                                 </div>
                                 <div>
@@ -276,7 +331,6 @@
     </div>
     <!-- <script src="./js/index.js"></script> -->
     <!-- Django's specific syntax for linking files -->
-    <script src="{% static 'best_suburb/javascript/index.js' %}"></script>
 </body>
 
 </html>

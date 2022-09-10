@@ -35,34 +35,34 @@
                 </a>
             </div>
         </div>
-        <div class="prefix-search-combination">
-            <div class="navbar bg-light" >
-                <div class="navbar bg-light">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                </div>
-                <nav class="navbar bg-light">
-                    <div class="container-fluid">
-                        <form class="row g-2">
-                            <div class="col-auto">
-                                <input class="form-control" type="text" placeholder="Search other university" aria-label="default input example">
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-outline-primary" type="submit">Search</button>
-                            </div>
-                    
-                        </form>
-                    
-                    </div>
-                </nav>   
-            </div>
-        </div>
+<!--        <div class="prefix-search-combination">-->
+<!--            <div class="navbar bg-light" >-->
+<!--                <div class="navbar bg-light">-->
+<!--                    <i class="fa fa-search" aria-hidden="true"></i>-->
+<!--                </div>-->
+<!--                <nav class="navbar bg-light">-->
+<!--                    <div class="container-fluid">-->
+<!--                        <form class="row g-2">-->
+<!--                            <div class="col-auto">-->
+<!--                                <input class="form-control" type="text" placeholder="Search other university" aria-label="default input example">-->
+<!--                            </div>-->
+<!--                            <div class="col-auto">-->
+<!--                                <button class="btn btn-outline-primary" type="submit">Search</button>-->
+<!--                            </div>-->
+<!--                    -->
+<!--                        </form>-->
+<!--                    -->
+<!--                    </div>-->
+<!--                </nav>   -->
+<!--            </div>-->
+<!--        </div>-->
     </div>
 
 
     <div class = "suburb-image">
         <div class= "row">
             <div class="col-auto">
-                <img src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
+                <img style="border-radius: 100px" src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
             </div>
             <div class="col-auto">
                 <div class = "chart">
@@ -81,7 +81,19 @@
         <dd class="col-sm-9">
             <div  class= "list">
                 <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20" height="20">
-                <p>{{suburb.name}} - {{suburb.postcode}},{{suburb.location}}</p>
+                {% if 0 <= suburb.latitude and  0 <= suburb.longitude %}
+                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+                    <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;E</div>
+                {% elif suburb.latitude >= 0  and 0 > suburb.longitude %}
+                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+                    <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;W</div>
+                {% elif 0 > suburb.latitude and suburb.longitude >= 0 %}
+                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+                    <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;E</div>
+                {% else %}
+                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+                    <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;W</div>
+                {% endif %}
             </div>
         </dd>
     </dl>
@@ -98,7 +110,7 @@
       </ul>-->
     <div class="row">
         <p>Crime rate: {{suburb.crime_rate}}</p>
-        <p>Distance from school: {{suburb.average_rent}}m</p>
+        <p>Distance from school: {{suburb.distance}} km</p>
     </div>
     <div class="row">
          <p>Average Rent: ${{suburb.average_rent}}/per week</p>
