@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
     <!-- Django's specific syntax for linking files -->
     <script src="{% static 'best_suburb/javascript/jquery.range.js' %}"></script>
-
+    <script src="{% static 'best_suburb/javascript/info.js' %}"></script>
 </head>
 
-<body >
+<body>
     <div class="top-wrapper">
         <div class="logo">
             <img src="" alt="">
@@ -35,37 +35,38 @@
                 </a>
             </div>
         </div>
-<!--        <div class="prefix-search-combination">-->
-<!--            <div class="navbar bg-light" >-->
-<!--                <div class="navbar bg-light">-->
-<!--                    <i class="fa fa-search" aria-hidden="true"></i>-->
-<!--                </div>-->
-<!--                <nav class="navbar bg-light">-->
-<!--                    <div class="container-fluid">-->
-<!--                        <form class="row g-2">-->
-<!--                            <div class="col-auto">-->
-<!--                                <input class="form-control" type="text" placeholder="Search other university" aria-label="default input example">-->
-<!--                            </div>-->
-<!--                            <div class="col-auto">-->
-<!--                                <button class="btn btn-outline-primary" type="submit">Search</button>-->
-<!--                            </div>-->
-<!--                    -->
-<!--                        </form>-->
-<!--                    -->
-<!--                    </div>-->
-<!--                </nav>   -->
-<!--            </div>-->
-<!--        </div>-->
+        <!--        <div class="prefix-search-combination">-->
+        <!--            <div class="navbar bg-light" >-->
+        <!--                <div class="navbar bg-light">-->
+        <!--                    <i class="fa fa-search" aria-hidden="true"></i>-->
+        <!--                </div>-->
+        <!--                <nav class="navbar bg-light">-->
+        <!--                    <div class="container-fluid">-->
+        <!--                        <form class="row g-2">-->
+        <!--                            <div class="col-auto">-->
+        <!--                                <input class="form-control" type="text" placeholder="Search other university" aria-label="default input example">-->
+        <!--                            </div>-->
+        <!--                            <div class="col-auto">-->
+        <!--                                <button class="btn btn-outline-primary" type="submit">Search</button>-->
+        <!--                            </div>-->
+        <!--                    -->
+        <!--                        </form>-->
+        <!--                    -->
+        <!--                    </div>-->
+        <!--                </nav>   -->
+        <!--            </div>-->
+        <!--        </div>-->
     </div>
 
 
-    <div class = "suburb-image">
-        <div class= "row">
+    <div class="suburb-image">
+        <div class="row">
             <div class="col-auto">
-                <img style="border-radius: 100px" src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb" width="700" height="400">
+                <img style="border-radius: 100px" src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb"
+                    width="700" height="400">
             </div>
             <div class="col-auto">
-                <div class = "chart">
+                <div class="chart">
                     <p>{{char|safe}}</p>
                 </div>
             </div>
@@ -79,21 +80,22 @@
             </div>
         </dt>
         <dd class="col-sm-9">
-            <div  class= "list">
-                <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20" height="20">
-                {% if 0 <= suburb.latitude and  0 <= suburb.longitude %}
-                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-                    <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;E</div>
-                {% elif suburb.latitude >= 0  and 0 > suburb.longitude %}
-                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-                    <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;W</div>
-                {% elif 0 > suburb.latitude and suburb.longitude >= 0 %}
-                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-                    <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;E</div>
-                {% else %}
-                    <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-                    <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;W</div>
-                {% endif %}
+            <div class="list">
+                <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"
+                    height="20">
+            {% if 0 <= suburb.latitude and 0 <= suburb.longitude %}
+            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+            <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;E</div>
+            {% elif suburb.latitude >= 0 and 0 > suburb.longitude %}
+            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+            <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;W</div>
+            {% elif 0 > suburb.latitude and suburb.longitude >= 0 %}
+            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+            <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;E</div>
+            {% else %}
+            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
+            <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;W</div>
+            {% endif %}
             </div>
         </dd>
     </dl>
@@ -102,50 +104,69 @@
         <h2>Facility</h2>
     </div>
 
-<div class="suburb-info">
-    <!--<ul class="list-inline">
+    <div class="suburb-info">
+        <!--<ul class="list-inline">
         <li class="list-inline-item">Crime rate: {{suburb.crime_rate}}</li>
 
         <li class="list-inline-item">Distance from school: {{suburb.average_rent}}m</li>
       </ul>-->
-    <div class="row">
-        <p>Crime rate: {{suburb.crime_rate}}</p>
-        <p>Distance from school: {{suburb.distance}} km</p>
+        <div class="row">
+            <p>Crime rate: {{suburb.crime_rate}}</p>
+            <p>Distance from school: {{suburb.distance}} km</p>
+        </div>
+        <div class="row">
+            <p>Average Rent: ${{suburb.average_rent}}/per week</p>
+            <p>Public transport access to univerisity: None</p>
+        </div>
+
     </div>
-    <div class="row">
-         <p>Average Rent: ${{suburb.average_rent}}/per week</p>
-         <p>Public transport access to univerisity: None</p>
+
+    <div class="Facility">
+        <h3>Add the most traveled places to see transport availability</h3>
     </div>
 
-</div>
-
-<div class="Facility">
-    <h3>Add the most traveled places to see transport availability</h3>
-</div>
 
 
-
-<div class="container" style=" left:80px; top:850px;">
-    <table class="_table">
-        <thead>
-            <tr>
-                <th>Most Traveled Places</th>
-                <!-- <th>Phone</th>
+    <div class="container" style=" left:80px; top:850px;">
+        <table class="_table">
+            <thead>
+                <tr>
+                    <th>Most Traveled Places</th>
+                    <!-- <th>Phone</th>
                   <th>Address</th> -->
-                <th width="50px">
-                    <div class="action_container">
-                        <button class="success" onclick="create_tr('table_body')">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </th>
-            </tr>
-        </thead>
-        <tbody id="table_body">
-            <tr>
-                <td>
-                    <input type="text" class="form_control" placeholder="To:">
-                    <!-- </td>
+                    <th width="50px">
+                        <div class="action_container">
+                            <button class="success" onclick="create_tr('table_body')">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="table_body">
+                <form>
+                    <tr>
+                        <td>
+                            <input list="places" id="place" autocomplete="off" autofocus placeholder="To: "
+                                type="text">
+                            <datalist id="places">
+
+                            </datalist>
+                        </td>
+                        <td>
+                            <input id="submit" type="submit">
+                        </td>
+                    </tr>
+                </form>
+
+                <!-- <td>
+                    <div>
+                        <input type="text" class="form_control" placeholder="To:" id="place">
+                        <ul id="results">
+                        </ul>
+                    </div> -->
+
+                <!-- </td>
                   <td>
                     <input type="text" class="form_control" placeholder="+880177x-xxxxxx">
                   </td>
@@ -159,9 +180,9 @@
                         </button>
                     </div>
                 </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-{% endblock %}
+    {% endblock %}
