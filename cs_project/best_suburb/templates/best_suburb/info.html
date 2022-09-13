@@ -83,20 +83,12 @@
             <div class="list">
                 <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"
                     height="20">
-            {% if 0 <= suburb.latitude and 0 <= suburb.longitude %}
-            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-            <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;E</div>
-            {% elif suburb.latitude >= 0 and 0 > suburb.longitude %}
-            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-            <div>{{suburb.latitude}}&#176;N, {{suburb.longitude}}&#176;W</div>
-            {% elif 0 > suburb.latitude and suburb.longitude >= 0 %}
-            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-            <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;E</div>
-            {% else %}
-            <div>{{suburb.name}}, {{suburb.postcode}}</div><br>
-            <div>{{suburb.latitude}}&#176;S, {{suburb.longitude}}&#176;W</div>
-            {% endif %}
-            </div>
+                <ul>
+
+                    <div>{{suburb.name}}, {{suburb.postcode}}</div>
+                    <div>{{suburb.latitude}}&#176;{{suburb.hemisphere_latitude}},
+                        {{suburb.longitude}}&#176;{{suburb.hemisphere_longitude}}</div>
+                </ul>
         </dd>
     </dl>
 
@@ -147,8 +139,7 @@
                 <form>
                     <tr>
                         <td>
-                            <input list="places" id="place" autocomplete="off" autofocus placeholder="To: "
-                                type="text">
+                            <input list="places" id="place" autocomplete="off" autofocus placeholder="To: " type="text">
                             <datalist id="places">
 
                             </datalist>

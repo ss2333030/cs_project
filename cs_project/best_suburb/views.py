@@ -113,15 +113,39 @@ def get_qualified_suburbs(uni_name: str, rent_min: int, rent_max: int, crime_rat
         e["distance"] = round(haversine_distance(l1, l2), 2)
         return e
 
-    
-
     return map(filter(suburbs, condition), add_distance_property)
 
+def convert_coordinates(e: Suburb) -> Suburb:
+    latitude = e["latitude"]
+    longitude = e["longitude"]
+
+    if latitude >= 0 and longitude >= 0:
+        e["latitude"] = abs(latitude)
+        e["hemisphere_latitude"] = "N"
+        e["longitude"] = abs(longitude)
+        e["hemisphere_longitude"] = "E"
+    elif latitude >= 0:
+        e["latitude"] = abs(latitude)
+        e["hemisphere_latitude"] = "N"
+        e["longitude"] = abs(longitude)
+        e["hemisphere_longitude"] = "W"
+    elif longitude >= 0:
+        e["latitude"] = abs(latitude)
+        e["hemisphere_latitude"] = "S"
+        e["longitude"] = abs(longitude)
+        e["hemisphere_longitude"] = "E"
+    else:
+        e["latitude"] = abs(latitude)
+        e["hemisphere_latitude"] = "S"
+        e["longitude"] = abs(longitude)
+        e["hemisphere_longitude"] = "W"
+    return e
 
 
 ################################### Views #######################################################
 def places(request):
-    print(request.GET)
+    """ Request handler for getting a list of places."""
+
     URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + request.GET.get("place") +"&key=AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
     payload={}
     headers = {}
@@ -165,7 +189,6 @@ def list(request):
         except Exception:
             # If the input is invalid
             return render(request, "best_suburb/400.html")
-
         qualified_suburbs = get_qualified_suburbs(uni_name, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
         return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs})
 
@@ -205,7 +228,7 @@ def info(request):
         request,
         "best_suburb/info.html",
         {
-            "suburb": Suburb.objects.get(name=request.GET.get("name")),
+            "suburb": convert_coordinates(Suburb.objects.filter(name=request.GET.get("name")).values()[0]),
             "char": myechar.render_embed(),
         },
     )
