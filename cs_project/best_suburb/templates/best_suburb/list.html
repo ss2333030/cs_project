@@ -6,15 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
-
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Suburb</title>
     <!-- <link rel="stylesheet" href="./css/style.css"> -->
     <!-- Django's specific syntax for linking files -->
-
-    <!-- font-awesome -->
+     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -22,7 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
+    
     <!-- <link rel="stylesheet" href="./css/jquery.range.css"> -->
     <!-- Django's specific syntax for linking files -->
 
@@ -36,18 +33,33 @@
         <div class="logo">
             <img src="" alt="">
             <div class="logo-title">
-                <a href="{% url 'index' %}" style="text-decoration: none">
+                <a href="{% url 'index' %}" style="text-decoration: none;">
                     <p>BEST</p>
                     <p>SUBURB</p>
                 </a>
-
             </div>
         </div>
         <div class="prefix-search-combination">
             <div class="combination-prefix-item">
                 <i class="fa fa-search" aria-hidden="true"></i>
             </div>
-            <input class="combination-search-item" type="text" placeholder="Search suburb for other university">
+            <form class="row g-3" action="{% url 'list' %}" method="post">
+                {% csrf_token %}
+                <div class="col">
+                    <input type="text" class="combination-search-item" placeholder="Search Another University"
+                    name="uni_name" id="uni_name">
+                    <div class="filter-btn center">
+                        <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
+                            class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <button id="search" type="submit" style="width:100px">Search</button>
+                </div>
+            </form>
+            </div>
         </div>
     </div>
 
@@ -91,7 +103,7 @@
         <div class="list">
             {% for suburb in suburbs %}
             <a href="/info?name={{ suburb.name }}" id="suburb_card" style="text-decoration: none">
-                <div class="item">
+                <div class="item" >
                     <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
                     <div>
                         <p class="midnight-express">{{ suburb.name }}</p>
@@ -114,10 +126,6 @@
             {% endfor %}
         </div>
     </div>
-
-                    
-
-
     <script>
         $(document).ready(function () {
             $('.slider-input').jRange({
