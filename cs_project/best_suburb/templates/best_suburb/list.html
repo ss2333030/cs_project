@@ -6,23 +6,23 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Suburb</title>
     <!-- <link rel="stylesheet" href="./css/style.css"> -->
     <!-- Django's specific syntax for linking files -->
-    <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- font-awesome -->
+     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
-        integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
-        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    
     <!-- <link rel="stylesheet" href="./css/jquery.range.css"> -->
     <!-- Django's specific syntax for linking files -->
-    <link rel="stylesheet" href="{% static 'best_suburb/css/jquery.range.css' %}">
+
     <!-- <script src="./js/jquery.range.js"></script> -->
     <!-- Django's specific syntax for linking files -->
     <script src="{% static 'best_suburb/javascript/jquery.range.js' %}"></script>
@@ -33,20 +33,36 @@
         <div class="logo">
             <img src="" alt="">
             <div class="logo-title">
-                <a href="{% url 'index' %}" style="text-decoration: none;color:#416AFF">
+                <a href="{% url 'index' %}" style="text-decoration: none;">
                     <p>BEST</p>
                     <p>SUBURB</p>
                 </a>
-
             </div>
         </div>
         <div class="prefix-search-combination">
             <div class="combination-prefix-item">
                 <i class="fa fa-search" aria-hidden="true"></i>
             </div>
-            <input id="uni_name" class="combination-search-item" type="text" placeholder="Search suburb for other university" value="{{ uni_name }}">
+            <form class="row g-3" action="{% url 'list' %}" method="post">
+                {% csrf_token %}
+                <div class="col">
+                    <input type="text" class="combination-search-item" placeholder="Search Another University"
+                    name="uni_name" id="uni_name" value="{{ uni_name }}">
+                    <div class="filter-btn center">
+                        <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
+                            class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col">
+                    <button id="search" type="submit" style="width:100px">Search</button>
+                </div>
+            </form>
+            </div>
         </div>
     </div>
+
     <div class="content-wrapper2">
         <form id="form">
         <div class="drop-down-wrapper">

@@ -161,8 +161,13 @@ body {
     border-bottom-right-radius: 10px;
     background-color: rgb(245, 245, 245);
     padding: 10px;
-    max-width: 400px;
-    width: 80%;
+    width: 400px;
+    
+    
+}
+
+.combination-search-item .ietm{
+    margin-right: 20px;
 }
 
 .combination-search-item:focus-visible {
@@ -202,6 +207,8 @@ body {
 .list {
     display: flex;
     flex-wrap: wrap;
+    padding-left:  50px;;
+    
 }
 
 .chart {
@@ -228,16 +235,16 @@ body {
 
 .list .item {
     width: 300px;
-    height: 300px;
-    padding: 20px 40px;
+    height: 360px;
+    padding: 20px 20px;
+   
     background-color: rgb(232, 244, 253);
     border-radius: 20px;
     margin-right: 20px;
+    margin-top: 50px;
 }
 
-.item+.item {
-    margin-left: 20px;
-}
+
 
 #suburb_card:hover {
     text-decoration: none;
