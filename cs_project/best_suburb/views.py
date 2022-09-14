@@ -152,7 +152,7 @@ def places(request):
     response = requests.request("GET", URL, headers=headers, data=payload).json()
     return JsonResponse(response)
 
-
+# Client -> Server -> Google map API
 
 
 def index(request):
@@ -161,8 +161,37 @@ def index(request):
     """
 
     # This returns the page "index.html"
-
     return render(request, "best_suburb/index.html")
+
+def suburbs(request):
+    """ Request handler for the path "/suburbs". This function will 
+        be called whenever the client requests the path "/suburbs".
+    """
+
+    # If this is a GET request, this means the client has filled out the form on the homepage
+    # Functions and constants used to handle the input values
+    UNDEFINED = "-1"
+    INFINITY = 100000000
+    correct_min = lambda x: 0 if x < 0 else x
+    correct_max = lambda x: INFINITY if x < 0 else x
+
+    # Check if the input values are valid or not
+    try:
+        uni_name = request.POST.get("uni_name")
+        rent_min = correct_min(int(request.POST.get("rent_min")))
+        rent_max = correct_max(int(request.POST.get("rent_max")))
+        distance_min = correct_min(int(request.POST.get("distance_min")))
+        distance_max = correct_max(int(request.POST.get("distance_max")))
+        crime_rate_max = correct_max(int(request.POST.get("crime_rate_max")))
+    except Exception:
+        # If the input is invalid
+        return render(request, "best_suburb/400.html")
+
+    # Save uni_name into the current session
+    request.session["uni_name"] = uni_name
+        
+    qualified_suburbs = get_qualified_suburbs(uni_name, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
+    return JsonResponse(qualified_suburbs)
 
 
 def list(request):
@@ -170,31 +199,34 @@ def list(request):
         be called whenever the client requests the path "/list".
     """
 
-    # If this is a POST request, this means the client has filled out the form on the homepage
-    if request.method == "POST":
-        # Functions and constants used to handle the input values
-        UNDEFINED = "-1"
-        INFINITY = 100000000
-        correct_min = lambda x: 0 if x < 0 else x
-        correct_max = lambda x: INFINITY if x < 0 else x
+    # If this is a GET request, this means the client has filled out the form on the homepage
+    # Functions and constants used to handle the input values
+    UNDEFINED = "-1"
+    INFINITY = 100000000
+    correct_min = lambda x: 0 if x < 0 else x
+    correct_max = lambda x: INFINITY if x < 0 else x
 
-        # Check if the input values are valid or not
-        try:
-            uni_name = request.POST.get("uni_name")
-            rent_min = correct_min(int(request.POST.get("rent_min")))
-            rent_max = correct_max(int(request.POST.get("rent_max")))
-            distance_min = correct_min(int(request.POST.get("distance_min")))
-            distance_max = correct_max(int(request.POST.get("distance_max")))
-            crime_rate_max = correct_max(int(request.POST.get("crime_rate_max")))
-        except Exception:
-            # If the input is invalid
-            return render(request, "best_suburb/400.html")
-        qualified_suburbs = get_qualified_suburbs(uni_name, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
-        return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs})
+    # Check if the input values are valid or not
+    try:
+        uni_name = request.POST.get("uni_name")
+        rent_min = correct_min(int(request.POST.get("rent_min")))
+        rent_max = correct_max(int(request.POST.get("rent_max")))
+        distance_min = correct_min(int(request.POST.get("distance_min")))
+        distance_max = correct_max(int(request.POST.get("distance_max")))
+        crime_rate_max = correct_max(int(request.POST.get("crime_rate_max")))
+    except Exception:
+        # If the input is invalid
+        return render(request, "best_suburb/400.html")
+
+    # Save uni_name into the current session
+    request.session["uni_name"] = uni_name
+        
+    qualified_suburbs = get_qualified_suburbs(uni_name, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
+    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": request.session["uni_name"]})
 
 
-    # if the client accesses this path directly without filling the form, send all suburbs to the client
-    return render(request, "best_suburb/list.html", { "suburbs" : Suburb.objects.all().values()})
+    # # if the client accesses this path directly without filling the form, send all suburbs to the client
+    # return render(request, "best_suburb/list.html", { "suburbs" : Suburb.objects.all().values()})
 
 
 

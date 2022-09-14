@@ -38,7 +38,7 @@
         <h1 class="midnight-express">
             Welcome to Best Suburb!
         </h1>
-        <form action="{% url 'list' %}" method="post">
+        <form action="{% url 'list' %}" method="get">
             {% csrf_token %}
             <div class="wrapper center">
                 <div class="university-wrapper">
