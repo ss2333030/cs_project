@@ -142,7 +142,7 @@ def convert_coordinates(e: Suburb) -> Suburb:
     return e
 
 
-################################### Views #######################################################
+#################################### Views #######################################################
 def places(request):
     """ Request handler for getting a list of places."""
 
@@ -151,8 +151,6 @@ def places(request):
     headers = {}
     response = requests.request("GET", URL, headers=headers, data=payload).json()
     return JsonResponse(response)
-
-# Client -> Server -> Google map API
 
 
 def index(request):
@@ -174,15 +172,16 @@ def suburbs(request):
     INFINITY = 100000000
     correct_min = lambda x: 0 if x < 0 else x
     correct_max = lambda x: INFINITY if x < 0 else x
+    correct_value = lambda x: "-1" if x is None or x == "" else x
 
     # Check if the input values are valid or not
     try:
         uni_name = request.POST.get("uni_name")
-        rent_min = correct_min(int(request.POST.get("rent_min")))
-        rent_max = correct_max(int(request.POST.get("rent_max")))
-        distance_min = correct_min(int(request.POST.get("distance_min")))
-        distance_max = correct_max(int(request.POST.get("distance_max")))
-        crime_rate_max = correct_max(int(request.POST.get("crime_rate_max")))
+        rent_min = correct_min(int(correct_value(request.POST.get("rent_min"))))
+        rent_max = correct_max(int(correct_value(request.POST.get("rent_max"))))
+        distance_min = correct_min(int(correct_value(request.POST.get("distance_min"))))
+        distance_max = correct_max(int(correct_value(request.POST.get("distance_max"))))
+        crime_rate_max = correct_max(int(correct_value(request.POST.get("crime_rate_max"))))
     except Exception:
         # If the input is invalid
         return render(request, "best_suburb/400.html")
