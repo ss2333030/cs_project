@@ -86,11 +86,13 @@ def search():
     return 0
 
 
-def get_qualified_suburbs(uni_name: str, rent_min: int, rent_max: int, crime_rate_max: int, distance_min: int, distance_max: int):
+def get_qualified_suburbs(uni: str, rent_min: int, rent_max: int, crime_rate_max: int, distance_min: int, distance_max: int):
     """ Returns the correct suburbs according to user input. """
 
     # Get the university
-    university = University.objects.filter(name=uni_name)[0]
+
+    # university = University.objects.filter(id=uni)[0]
+    university = University.objects.filter(name=uni)[0]
 
     # Get the list of qualified suburbs
     suburbs = Suburb.objects.filter(
@@ -200,28 +202,34 @@ def list(request):
 
     # If this is a GET request, this means the client has filled out the form on the homepage
     # Functions and constants used to handle the input values
-    UNDEFINED = "-1"
     INFINITY = 100000000
     correct_min = lambda x: 0 if x < 0 else x
     correct_max = lambda x: INFINITY if x < 0 else x
 
     # Check if the input values are valid or not
     try:
-        uni_name = request.POST.get("uni_name")
-        rent_min = correct_min(int(request.POST.get("rent_min")))
-        rent_max = correct_max(int(request.POST.get("rent_max")))
-        distance_min = correct_min(int(request.POST.get("distance_min")))
-        distance_max = correct_max(int(request.POST.get("distance_max")))
-        crime_rate_max = correct_max(int(request.POST.get("crime_rate_max")))
-    except Exception:
+        # uni = request.GET.get("uni")
+        # University.objects.filter(id=uni)[0]
+        # if uni == "" or uni is None:
+        #     raise ValueError
+        uni = request.GET.get("uni_name")
+
+        rent_min = correct_min(int(request.GET.get("rent_min")))
+        rent_max = correct_max(int(request.GET.get("rent_max")))
+        distance_min = correct_min(int(request.GET.get("distance_min")))
+        distance_max = correct_max(int(request.GET.get("distance_max")))
+        crime_rate_max = correct_max(int(request.GET.get("crime_rate_max")))
+    except IndexError or ValueError:
         # If the input is invalid
-        return render(request, "best_suburb/400.html")
+        return render(request, "best_suburb/400.html", {"error_message": "You need to provide a valid uni ID"})
+    except TypeError:
+        return render(request, "best_suburb/400.html", {"error_message": "You need to provide valid parameters"})
 
     # Save uni_name into the current session
-    request.session["uni_name"] = uni_name
-        
-    qualified_suburbs = get_qualified_suburbs(uni_name, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
-    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": request.session["uni_name"]})
+    request.session["uni"] = uni
+
+    qualified_suburbs = get_qualified_suburbs(uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max)
+    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": request.session["uni"]})
 
 
     # # if the client accesses this path directly without filling the form, send all suburbs to the client
