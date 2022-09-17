@@ -1,13 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-    document.querySelector("#place").addEventListener('input', async function () {
-        const placeValue = document.querySelector("#place").value;
+    document.querySelector("").addEventListener('input', function () {
+        const placeValue = document.querySelector("").value;
         const URL = "/places?place=" + placeValue;
 
         fetch(URL).then(response => response.json()).then(data => {
             const results = document.querySelector("#places");
             data["predictions"].forEach(e => {
                 const option = document.createElement("option");
-                option.value = e["description"];
+                option.innerHTML = `${e["structured_formatting"]["main_text"]} ${e["structured_formatting"]["secondary_text"]}`;
+                option.value = e["place_id"];
                 results.append(option);
             });
         }).catch(error => {
