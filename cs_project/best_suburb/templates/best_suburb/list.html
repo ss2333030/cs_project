@@ -46,8 +46,14 @@
             <form class="row g-3" action="{% url 'list' %}" method="post">
                 {% csrf_token %}
                 <div class="col">
-                    <input type="text" class="combination-search-item" placeholder="Search Another University"
-                    name="uni_name" id="uni_name">
+                    <!-- <input type="text" class="combination-search-item" placeholder="Search Another University"
+                    name="uni_name" id="uni_name"> -->
+                    <select class="form-select combination-search-item" id="uni" name="uni">
+                        {% for university in universities %}
+                        <option value="{{ university.id }}">{{ university.name }}</option>
+                        {% endfor %}
+                    </select>
+                    
                     <div class="filter-btn center">
                         <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
                             class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
