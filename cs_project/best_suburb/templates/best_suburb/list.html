@@ -47,7 +47,7 @@
                 {% csrf_token %}
                 <div class="col">
                     <input type="text" class="combination-search-item" placeholder="Search Another University"
-                    name="uni_name" id="uni_name" value="{{ uni_name }}">
+                    name="uni_name" id="uni_name">
                     <div class="filter-btn center">
                         <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
                             class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -64,8 +64,7 @@
     </div>
 
     <div class="content-wrapper2">
-        <form id="form">
-        <div class="drop-down-wrapper">
+        {% comment %} <div class="drop-down-wrapper">
             <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
@@ -73,7 +72,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li style="padding: 25px;">
-                        <input id="rent_min" type="hidden" value="0, 80" id="rentRate" class="slider-input" />
+                        <input type="hidden" value="0, 80" id="rentRate" class="slider-input" />
                     </li>
                 </ul>
             </div>
@@ -84,7 +83,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li style="padding: 25px;">
-                        <input id="distance_min" type="hidden" value="0, 80" id="universityRate" class="slider-input" />
+                        <input type="hidden" value="0, 80" id="universityRate" class="slider-input" />
                     </li>
                 </ul>
             </div>
@@ -95,13 +94,13 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li style="padding: 25px;">
-                        <input id="crime_rate_max" type="hidden" value="0, 80" id="rangeCrimeRate" class="slider-input" />
+                        <input type="hidden" value="0, 80" id="rangeCrimeRate" class="slider-input" />
                     </li>
                 </ul>
             </div>
-        </div>
-        </form>
-        <div class="list" id="suburb_list">
+        </div> {% endcomment %}
+        
+        <div class="list">
             {% for suburb in suburbs %}
             <a href="/info?name={{ suburb.name }}">
             <!-- <a href="/info?suburb={{ suburb.id }}"> -->

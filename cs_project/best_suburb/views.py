@@ -6,7 +6,7 @@ from os import lstat
 from re import T
 from django.shortcuts import render
 from pyecharts import options as opts
-from pyecharts.charts import Bar, Line
+from pyecharts.charts import Bar, Line, Gauge, Liquid
 from pyecharts import options as opts
 import pyecharts.options as opts
 from pyecharts.charts import Line
@@ -92,7 +92,6 @@ def search():
         print(i.name)
     return 0
 
-
 def get_qualified_suburbs(
     uni: str,
     rent_min: int,
@@ -104,9 +103,7 @@ def get_qualified_suburbs(
     """Returns the correct suburbs according to user input."""
 
     # Get the university
-
-    # university = University.objects.filter(id=uni)[0]
-    university = University.objects.filter(name=uni)[0]
+    university = University.objects.filter(id=uni)[0]
 
     # Get the list of qualified suburbs
     suburbs = Suburb.objects.filter(
@@ -192,13 +189,17 @@ def places(request):
     return JsonResponse(response)
 
 
+
+
 def index(request):
     """Request handler for the path "/". This function will be
     called whenever the client requests the path "/".
     """
 
     # This returns the page "index.html"
+
     return render(request, "best_suburb/index.html")
+
 
 
 def suburbs(request):
@@ -206,11 +207,13 @@ def suburbs(request):
     be called whenever the client requests the path "/suburbs".
     """
 
-    # If this is a GET request, this means the client has filled out the form on the homepage
-    # Functions and constants used to handle the input values
-    INFINITY = 100000000
-    correct_min = lambda x: 0 if x < 0 else x
-    correct_max = lambda x: INFINITY if x < 0 else x
+    # If this is a POST request, this means the client has filled out the form on the homepage
+    if request.method == "POST":
+        # Functions and constants used to handle the input values
+        UNDEFINED = "-1"
+        INFINITY = 100000000
+        correct_min = lambda x: 0 if x < 0 else x
+        correct_max = lambda x: INFINITY if x < 0 else x
 
     # Check if the input values are valid or not
     try:
@@ -317,10 +320,10 @@ def info(request):
     # suburbs_name = "Clayton"
 
     # context["char"] = myechar.render_embed()
-    myechar = get_char()
-    print("xxxx")
-    print(myechar)
-    print("aaaaa")
+    myechar = get_crimerate_char()
+    recome=recom_char()
+    print(recome)
+    print("xxx")
     return render(
         request,
         "best_suburb/info.html",
@@ -328,12 +331,13 @@ def info(request):
             "suburb": convert_coordinates(
                 Suburb.objects.filter(name=request.GET.get("name")).values()[0]
             ),
-            "char": myechar.render_embed(),
+            "crime_char": myechar.render_embed(),
+            "recom_char":recome,
         },
     )
 
 
-def get_char():
+def get_crimerate_char():
     x_data = ["2012", "2014", "2016", "2018", "2020", "2022"]
     y_data = [2, 4, 6, 8, 3, 4]
 
@@ -341,14 +345,17 @@ def get_char():
         Line(init_opts=opts.InitOpts(width="750px", height="400px"))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
-            series_name="Clayton crime rate",
+            series_name="crime rate",
             stack="total",
             y_axis=y_data,
             label_opts=opts.LabelOpts(is_show=False),
         )
         .set_global_opts(
-            title_opts=opts.TitleOpts(title="   Clayton crime rate in ten year"),
+            title_opts=opts.TitleOpts(title="   Crime rate in ten year",pos_left='center'),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
+            legend_opts=opts.LegendOpts(is_show=True,
+                                        pos_left='70%',
+                                        pos_bottom='90%'),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
                 name="Crime rate(Percentage%)",
@@ -362,3 +369,15 @@ def get_char():
         )
     )
     return c
+
+
+def recom_char():
+    liquid = (Liquid(init_opts=opts.InitOpts(width='600px', height='400px'))
+              .add("", [0.52, 0.44])
+              .set_global_opts(title_opts=opts.TitleOpts(title="  Recommendation Index",pos_left='center',title_textstyle_opts=opts.TextStyleOpts(
+                                                   color='red'),pos_bottom='17%',),)
+              )
+
+
+
+    return liquid.render_embed()
