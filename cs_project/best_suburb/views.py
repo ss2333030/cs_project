@@ -92,6 +92,53 @@ def search():
         print(i.name)
     return 0
 
+
+def get_a_photo(suburb: Suburb) -> str:
+    """Get a photograph of the suburb using Google map API."""
+    URL_PLACE = (
+        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
+        + suburb["name"]
+        + "&inputtype=textquery&locationbias=circle%3A2000%40"
+        + str(suburb["latitude"])
+        + "%2C"
+        + str(suburb["longitude"])
+        + "&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key="
+        + API_KEY
+    )
+    payload_place = {}
+    headers_place = {}
+
+    response_place = requests.request(
+        "GET", URL_PLACE, headers=headers_place, data=payload_place
+    ).json()
+
+    print(response_place)
+    photo_reference = response_place["candidates"][0]["photos"][0]["photo_reference"]
+    URL_PHOTO = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+    return URL_PHOTO
+
+
+#     return photos
+# def get_photos(suburb: str):
+#     suburb = Suburb.objects.filter(id=suburb)[0]
+#     URL = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={suburb.name}&inputtype=textquery&locationbias=circle%3A2000%40{suburb.latitude}%2C{suburb.longitude}&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key={API_KEY}"
+#     payload = {}
+#     headers = {}
+
+#     response = requests.request("GET", URL, headers=headers, data=payload).json()
+#     photos = []
+
+#     for i in range(len(response["candidates"]["photos"])):
+#         photo_reference = response["candidates"]["photos"][i]["photo_reference"]
+#         PHOTO_URL = f"https://maps.googleapis.com/maps/api/place/photo?&photo_reference={photo_reference}&key={API_KEY}"
+#         payload_2 = {}
+#         headers_2 = {}
+#         response = requests.request("GET", PHOTO_URL, headers=headers_2, data=payload_2)
+#         photos.append(response.text)
+
+#     return photos
+
+
 def get_qualified_suburbs(
     uni: str,
     rent_min: int,
@@ -119,13 +166,18 @@ def get_qualified_suburbs(
         return distance_min <= haversine_distance(l1, l2) <= distance_max
 
     # Add a distance property to the suburbs
-    def add_distance_property(e: Suburb):
-        l1 = Location(e["latitude"], e["longitude"])
-        l2 = Location(university.latitude, university.longitude)
-        e["distance"] = round(haversine_distance(l1, l2), 2)
+    # def add_distance_property(e: Suburb):
+    #     l1 = Location(e["latitude"], e["longitude"])
+    #     l2 = Location(university.latitude, university.longitude)
+    #     e["distance"] = round(haversine_distance(l1, l2), 2)
+    #     return e
+
+    # Add a photo property to the suburbs
+    def add_photo_property(e: Suburb):
+        e["photo"] = get_a_photo(e)
         return e
 
-    return map(filter(suburbs, condition), add_distance_property)
+    return map(filter(suburbs, condition), add_photo_property)
 
 
 def convert_coordinates(e: Suburb) -> Suburb:
@@ -155,25 +207,6 @@ def convert_coordinates(e: Suburb) -> Suburb:
     return e
 
 
-# def get_photos(suburb: str):
-#     suburb = Suburb.objects.filter(id=suburb)[0]
-#     URL = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={suburb.name}&inputtype=textquery&locationbias=circle%3A2000%40{suburb.latitude}%2C{suburb.longitude}&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key={API_KEY}"
-#     payload = {}
-#     headers = {}
-
-#     response = requests.request("GET", URL, headers=headers, data=payload).json()
-#     photos = []
-
-#     for i in range(len(response["candidates"]["photos"])):
-#         photo_reference = response["candidates"]["photos"][i]["photo_reference"]
-#         PHOTO_URL = f"https://maps.googleapis.com/maps/api/place/photo?&photo_reference={photo_reference}&key={API_KEY}"
-#         payload_2 = {}
-#         headers_2 = {}
-#         response = requests.request("GET", PHOTO_URL, headers=headers_2, data=payload_2)
-#         photos.append(response.text)
-
-#     return photos
-
 #################################### Views #######################################################
 def places(request):
     """Request handler for getting a list of places."""
@@ -189,16 +222,15 @@ def places(request):
     return JsonResponse(response)
 
 
-
-
 def index(request):
     """Request handler for the path "/". This function will be
     called whenever the client requests the path "/".
     """
 
     # This returns the page "index.html"
-    return render(request, "best_suburb/index.html", {"universities": University.objects.all()})
-
+    return render(
+        request, "best_suburb/index.html", {"universities": University.objects.all()}
+    )
 
 
 def suburbs(request):
@@ -247,7 +279,6 @@ def suburbs(request):
 
 
 def list(request):
-    print(request.GET)
     """Request handler for the path "/list". This function will
     be called whenever the client requests the path "/list".
     """
@@ -290,8 +321,15 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
-    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "universities": University.objects.all()})
-
+    return render(
+        request,
+        "best_suburb/list.html",
+        {
+            "suburbs": qualified_suburbs,
+            "current_uni": request.session["uni"],
+            "universities": University.objects.all(),
+        },
+    )
 
 
 def info(request):
@@ -315,7 +353,7 @@ def info(request):
 
     # context["char"] = myechar.render_embed()
     myechar = get_crimerate_char()
-    recome=recom_char()
+    recome = recom_char()
     print(recome)
     print("xxx")
     return render(
@@ -326,7 +364,7 @@ def info(request):
                 Suburb.objects.filter(name=request.GET.get("name")).values()[0]
             ),
             "crime_char": myechar.render_embed(),
-            "recom_char":recome,
+            "recom_char": recome,
         },
     )
 
@@ -345,11 +383,11 @@ def get_crimerate_char():
             label_opts=opts.LabelOpts(is_show=False),
         )
         .set_global_opts(
-            title_opts=opts.TitleOpts(title="   Crime rate in ten year",pos_left='center'),
+            title_opts=opts.TitleOpts(
+                title="   Crime rate in ten year", pos_left="center"
+            ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True,
-                                        pos_left='70%',
-                                        pos_bottom='90%'),
+            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="90%"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
                 name="Crime rate(Percentage%)",
@@ -366,12 +404,17 @@ def get_crimerate_char():
 
 
 def recom_char():
-    liquid = (Liquid(init_opts=opts.InitOpts(width='600px', height='400px'))
-              .add("", [0.52, 0.44])
-              .set_global_opts(title_opts=opts.TitleOpts(title="  Recommendation Index",pos_left='center',title_textstyle_opts=opts.TextStyleOpts(
-                                                   color='red'),pos_bottom='17%',),)
-              )
-
-
+    liquid = (
+        Liquid(init_opts=opts.InitOpts(width="600px", height="400px"))
+        .add("", [0.52, 0.44])
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title="  Recommendation Index",
+                pos_left="center",
+                title_textstyle_opts=opts.TextStyleOpts(color="red"),
+                pos_bottom="17%",
+            ),
+        )
+    )
 
     return liquid.render_embed()

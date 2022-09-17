@@ -50,7 +50,11 @@
                     name="uni_name" id="uni_name"> -->
                     <select class="form-select combination-search-item" id="uni" name="uni">
                         {% for university in universities %}
-                        <option value="{{ university.id }}">{{ university.name }}</option>
+                            {% if university.id == current_uni %}
+                                <option value="{{ university.id }}" selected>{{ university.name }}</option>
+                            {% else %}
+                                <option value="{{ university.id }}">{{ university.name }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     
@@ -111,7 +115,7 @@
             <a href="/info?name={{ suburb.name }}">
             <!-- <a href="/info?suburb={{ suburb.id }}"> -->
                 <div class="item" >
-                    <img id="image" src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="{{ suburb.name }}">
+                    <img id="image" src="{{ suburb.photo }}" alt="{{ suburb.name }}">
                     <div>
                         <p id="name" class="midnight-express">{{ suburb.name }}</p>
                         <p class="grey">
