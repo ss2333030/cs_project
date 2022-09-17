@@ -103,22 +103,23 @@
         </form>
         <div class="list" id="suburb_list">
             {% for suburb in suburbs %}
-            <a href="/info?name={{ suburb.name }}" id="suburb_card" style="text-decoration: none">
+            <a href="/info?name={{ suburb.name }}">
+            <!-- <a href="/info?suburb={{ suburb.id }}"> -->
                 <div class="item" >
-                    <img src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="">
+                    <img id="image" src="https://img95.699pic.com/photo/50149/6896.jpg_wh860.jpg" alt="{{ suburb.name }}">
                     <div>
-                        <p class="midnight-express">{{ suburb.name }}</p>
+                        <p id="name" class="midnight-express">{{ suburb.name }}</p>
                         <p class="grey">
                             <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
                             {{ suburb.state }}&nbsp;
-                            <span class="distance">
+                            <span id="postcode" class="distance">
                                 {{ suburb.postcode }}
                             </span>
                         </p>
-                        <p class="text-right">
+                        <p id="crime_rate" class="text-right">
                             Crime Rate:&nbsp;{{ suburb.crime_rate }}
                         </p>
-                        <p class="text-right">
+                        <p id="average_rent" class="text-right">
                             Average Rent: ${{ suburb.average_rent }}/per week
                         </p>
                     </div>
