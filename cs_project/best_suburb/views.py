@@ -93,29 +93,6 @@ def search():
     return 0
 
 
-def get_a_photo(suburb: Suburb) -> str:
-    """Get a photograph of the suburb using Google map API."""
-    URL_PLACE = (
-        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
-        + suburb["name"]
-        + "&inputtype=textquery&locationbias=circle%3A2000%40"
-        + str(suburb["latitude"])
-        + "%2C"
-        + str(suburb["longitude"])
-        + "&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key="
-        + API_KEY
-    )
-    payload_place = {}
-    headers_place = {}
-
-    response_place = requests.request(
-        "GET", URL_PLACE, headers=headers_place, data=payload_place
-    ).json()
-
-    print(response_place)
-    photo_reference = response_place["candidates"][0]["photos"][0]["photo_reference"]
-    URL_PHOTO = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-    return URL_PHOTO
 
 
 #     return photos
@@ -173,11 +150,52 @@ def get_qualified_suburbs(
     #     return e
 
     # Add a photo property to the suburbs
-    def add_photo_property(e: Suburb):
-        e["photo"] = get_a_photo(e)
+
+    def bind_suburb_to_google_map(e: Suburb) -> Suburb:
+        URL = (
+            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
+            + e["name"]
+            + "&inputtype=textquery&locationbias=circle%3A2000%40"
+            + str(e["latitude"])
+            + "%2C"
+            + str(e["longitude"])
+            + "&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key="
+            + API_KEY
+        )
+        payload = {}
+        headers = {}
+
+        response = requests.request(
+            "GET", URL, headers=headers, data=payload
+        ).json()
+
+        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+        photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+        e["photo"] = photo_url
+        e["place_id"] = response["candidates"][0]["place_id"]
+
         return e
 
-    return map(filter(suburbs, condition), add_photo_property)
+    return map(filter(suburbs, condition), bind_suburb_to_google_map)
+
+def get_photos(place_id: str):
+    """ Get a collection of photos for a given place. """
+    URL = f"https://maps.googleapis.com/maps/api/place/details/json?fields=formatted_address%2Cname%2Cphotos&place_id={place_id}&key={API_KEY}"
+    payload = {}
+    headers = {}
+
+    response = requests.request(
+        "GET", URL, headers=headers, data=payload
+    ).json()
+
+    photos = []
+
+    for i in range(len(response["result"]["photos"])):
+        photo_reference = response["result"]["photos"][i]["photo_reference"]
+        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+        photos.append(photo)
+
+    return photos
 
 
 def convert_coordinates(e: Suburb) -> Suburb:
@@ -321,6 +339,7 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+
     return render(
         request,
         "best_suburb/list.html",
@@ -356,12 +375,15 @@ def info(request):
     recome = recom_char()
     print(recome)
     print("xxx")
+    print(request.GET)
+    suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
+    suburb["photos"] = get_photos(request.GET.get("place_id"))
     return render(
         request,
         "best_suburb/info.html",
         {
             "suburb": convert_coordinates(
-                Suburb.objects.filter(name=request.GET.get("name")).values()[0]
+                suburb
             ),
             "crime_char": myechar.render_embed(),
             "recom_char": recome,

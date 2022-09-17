@@ -112,7 +112,7 @@
         
         <div class="list">
             {% for suburb in suburbs %}
-            <a href="/info?name={{ suburb.name }}">
+            <a href="/info?suburb={{ suburb.id }}&place_id={{suburb.place_id}}">
             <!-- <a href="/info?suburb={{ suburb.id }}"> -->
                 <div class="item" >
                     <img id="image" src="{{ suburb.photo }}" alt="{{ suburb.name }}">
