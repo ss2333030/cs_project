@@ -63,7 +63,7 @@
                             <h5 class="modal-title" id="exampleModalLabel">Filter</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{% url 'list' %}" method="post">
+                        
                             <div class="modal-body">
                                 {% csrf_token %}
         
@@ -313,7 +313,7 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </div>
-                        </form>
+                        
                     </div>
                 </div>
             </div>
