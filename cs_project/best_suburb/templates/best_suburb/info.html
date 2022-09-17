@@ -67,11 +67,15 @@
             </div>
             <div class="col-auto">
                 <div class="chart">
-                    <p>{{char|safe}}</p>
+                    <p>{{crime_char|safe}}</p>
+
                 </div>
             </div>
+
+
         </div>
     </div>
+
 
     <dl class="row">
         <dt class="col-sm-3">
@@ -102,14 +106,28 @@
 
         <li class="list-inline-item">Distance from school: {{suburb.average_rent}}m</li>
       </ul>-->
+
         <div class="row">
             <p>Crime rate: {{suburb.crime_rate}}</p>
             <p>Distance from school: {{suburb.distance}} km</p>
         </div>
         <div class="row">
-            <p>Average Rent: ${{suburb.average_rent}}/per week</p>
-            <p>Public transport access to univerisity: None</p>
+
+                 <p>Average Rent: ${{suburb.average_rent}}/per week</p>
+
+
+            <div class="col-auto">
+                <p>Public transport access to univerisity: None</p>
+            </div>
+
+            <div class="col-auto">
+                <div class="recome_chart">
+                    <p>{{recom_char|safe}}</p>
+
+                </div>
+            </div>
         </div>
+
 
     </div>
 
