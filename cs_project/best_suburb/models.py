@@ -17,7 +17,6 @@ class University(models.Model):
     latitude = models.FloatField(db_column='Latitude')  # Field name made lowercase.
     longitude = models.FloatField(db_column='Longitude')  # Field name made lowercase.
 
-
     class Meta:
         managed = False
         db_table = 'University'

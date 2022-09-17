@@ -114,14 +114,14 @@ def get_qualified_suburbs(
 
     # Filter suburbs by distance
     def condition(e: Suburb):
-        l1 = Location(float(e["latitude"]), float(e["longitude"]))
-        l2 = Location(float(university.latitude), float(university.longitude))
+        l1 = Location(e["latitude"], e["longitude"])
+        l2 = Location(university.latitude, university.longitude)
         return distance_min <= haversine_distance(l1, l2) <= distance_max
 
     # Add a distance property to the suburbs
     def add_distance_property(e: Suburb):
-        l1 = Location(float(e["latitude"]), float(e["longitude"]))
-        l2 = Location(float(university.latitude), float(university.longitude))
+        l1 = Location(e["latitude"], e["longitude"])
+        l2 = Location(university.latitude, university.longitude)
         e["distance"] = round(haversine_distance(l1, l2), 2)
         return e
 
@@ -197,8 +197,7 @@ def index(request):
     """
 
     # This returns the page "index.html"
-
-    return render(request, "best_suburb/index.html")
+    return render(request, "best_suburb/index.html", {"universities": University.objects.all()})
 
 
 
@@ -217,11 +216,10 @@ def suburbs(request):
 
     # Check if the input values are valid or not
     try:
-        # uni = request.GET.get("uni")
-        # University.objects.filter(id=uni)[0]
-        # if uni == "" or uni is None:
-        #     raise ValueError
-        uni = request.GET.get("uni_name")
+        uni = request.GET.get("uni")
+        University.objects.filter(id=uni)[0]
+        if uni == "" or uni is None:
+            raise ValueError
 
         rent_min = correct_min(int(request.GET.get("rent_min")))
         rent_max = correct_max(int(request.GET.get("rent_max")))
@@ -261,11 +259,10 @@ def list(request):
 
     # Check if the input values are valid or not
     try:
-        # uni = request.GET.get("uni")
-        # University.objects.filter(id=uni)[0]
-        # if uni == "" or uni is None:
-        #     raise ValueError
-        uni = request.GET.get("uni_name")
+        uni = request.GET.get("uni")
+        University.objects.filter(id=uni)[0]
+        if uni == "" or uni is None:
+            raise ValueError
 
         rent_min = correct_min(int(request.GET.get("rent_min")))
         rent_max = correct_max(int(request.GET.get("rent_max")))
@@ -292,12 +289,8 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
-    # return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": University.objects.filter(id=request.session["uni"])[0].name})
-    return render(
-        request,
-        "best_suburb/list.html",
-        {"suburbs": qualified_suburbs, "uni_name": request.session["uni"]},
-    )
+    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": University.objects.filter(id=request.session["uni"])[0].name})
+
 
 
 def info(request):
