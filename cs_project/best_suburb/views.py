@@ -93,8 +93,6 @@ def search():
     return 0
 
 
-
-
 #     return photos
 # def get_photos(suburb: str):
 #     suburb = Suburb.objects.filter(id=suburb)[0]
@@ -142,13 +140,6 @@ def get_qualified_suburbs(
         l2 = Location(university.latitude, university.longitude)
         return distance_min <= haversine_distance(l1, l2) <= distance_max
 
-    # Add a distance property to the suburbs
-    # def add_distance_property(e: Suburb):
-    #     l1 = Location(e["latitude"], e["longitude"])
-    #     l2 = Location(university.latitude, university.longitude)
-    #     e["distance"] = round(haversine_distance(l1, l2), 2)
-    #     return e
-
     # Add a photo property to the suburbs
 
     def bind_suburb_to_google_map(e: Suburb) -> Suburb:
@@ -165,9 +156,7 @@ def get_qualified_suburbs(
         payload = {}
         headers = {}
 
-        response = requests.request(
-            "GET", URL, headers=headers, data=payload
-        ).json()
+        response = requests.request("GET", URL, headers=headers, data=payload).json()
 
         photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
         photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
@@ -178,15 +167,23 @@ def get_qualified_suburbs(
 
     return map(filter(suburbs, condition), bind_suburb_to_google_map)
 
+
+def get_distance(suburb: Suburb, uni: str):
+    # Get the university
+    university = University.objects.filter(id=uni).values()[0]
+
+    l1 = Location(suburb["latitude"], suburb["longitude"])
+    l2 = Location(university["latitude"], university["longitude"])
+    return round(haversine_distance(l1, l2), 2)
+
+
 def get_photos(place_id: str):
-    """ Get a collection of photos for a given place. """
+    """Get a collection of photos for a given place."""
     URL = f"https://maps.googleapis.com/maps/api/place/details/json?fields=formatted_address%2Cname%2Cphotos&place_id={place_id}&key={API_KEY}"
     payload = {}
     headers = {}
 
-    response = requests.request(
-        "GET", URL, headers=headers, data=payload
-    ).json()
+    response = requests.request("GET", URL, headers=headers, data=payload).json()
 
     photos = []
 
@@ -377,14 +374,15 @@ def info(request):
     print("xxx")
     print(request.GET)
     suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
+
+    # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
+    suburb["distance"] = get_distance(suburb, request.session["uni"])
     return render(
         request,
         "best_suburb/info.html",
         {
-            "suburb": convert_coordinates(
-                suburb
-            ),
+            "suburb": convert_coordinates(suburb),
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
         },
