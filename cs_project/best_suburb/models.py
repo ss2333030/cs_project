@@ -36,7 +36,7 @@ class Suburb(models.Model):
     averagerent_in_2019 = models.IntegerField(db_column='Averagerent in 2019')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     averagerent_in_2020 = models.IntegerField(db_column='Averagerent in 2020')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     averagerent_in_2021 = models.IntegerField(db_column='Averagerent in 2021')  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    averagerent_in_2022 = models.IntegerField(db_column='Averagerent in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    average_rent = models.IntegerField(db_column='Averagerent in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     crime_rate_in_2013 = models.IntegerField(db_column='Crime rate in 2013')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     crime_rate_in_2014 = models.IntegerField(db_column='Crime rate in 2014')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     crime_rate_in_2015 = models.IntegerField(db_column='Crime rate in 2015')  # Field name made lowercase. Field renamed to remove unsuitable characters.
@@ -46,7 +46,7 @@ class Suburb(models.Model):
     crime_rate_in_2019 = models.IntegerField(db_column='Crime rate in 2019')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     crime_rate_in_2020 = models.IntegerField(db_column='Crime rate in 2020')  # Field name made lowercase. Field renamed to remove unsuitable characters.
     crime_rate_in_2021 = models.IntegerField(db_column='Crime rate in 2021')  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    crime_rate_in_2022 = models.IntegerField(db_column='Crime rate in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    crime_rate = models.IntegerField(db_column='Crime rate in 2022')  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
     class Meta:
         managed = False

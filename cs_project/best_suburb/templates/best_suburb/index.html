@@ -38,13 +38,13 @@
         <h1 class="midnight-express">
             Welcome to Best Suburb!
         </h1>
-        <form action="{% url 'list' %}" method="post">
+        <form action="{% url 'list' %}" method="get">
             {% csrf_token %}
             <div class="wrapper center">
                 <div class="university-wrapper">
                     <!-- <input type="text" class="university" placeholder="Enter Your University Name" name="uni_name"
                         id="uni"> -->
-                    <select class="form-select" id="uni" name="uni">
+                    <select class="form-select university" id="uni" name="uni">
                         {% for university in universities %}
                         <option value="{{ university.id }}">{{ university.name }}</option>
                         {% endfor %}

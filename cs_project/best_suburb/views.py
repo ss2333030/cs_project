@@ -247,6 +247,7 @@ def suburbs(request):
 
 
 def list(request):
+    print(request.GET)
     """Request handler for the path "/list". This function will
     be called whenever the client requests the path "/list".
     """
@@ -289,7 +290,7 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
-    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "uni_name": University.objects.filter(id=request.session["uni"])[0].name})
+    return render(request, "best_suburb/list.html", { "suburbs": qualified_suburbs, "universities": University.objects.all()})
 
 
 
