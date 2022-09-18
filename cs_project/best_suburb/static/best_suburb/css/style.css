@@ -79,7 +79,7 @@ body {
  line-height:30px;
 }
 .logo-title {
-    color: #4190EC;
+    padding-bottom: 17px;
     font-weight: 700;
 }
 
@@ -93,9 +93,10 @@ body {
 }
 
 .university-wrapper {
-    position: relative;
-    max-width: 600px;
-    width: 80%;
+    
+    max-width: 700px;
+    
+   
 }
 
 .university {
@@ -249,9 +250,42 @@ body {
     margin-top: 50px;
 }
 
+.form-class {
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.form-class .form-item{
+    border-radius: 20px;
+    margin-right: 20px;
+}
+
+.form-class-active {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 50px;
+    
+}
+.form-class-active .form-item-active{
+    border-radius: 20px;
+    margin-inline: auto;
+}
+
+.form-class-home {
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.form-class-home .form-item-home{
+    border-radius: 20px;
+    margin-inline: auto;
+}
+
+
 
 
 #suburb_card:hover {
     text-decoration: none;
 }
+
 

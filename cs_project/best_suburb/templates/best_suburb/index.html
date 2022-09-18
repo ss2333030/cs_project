@@ -41,24 +41,32 @@
         <form action="{% url 'list' %}" method="get">
             {% csrf_token %}
             <div class="wrapper center">
-                <div class="university-wrapper">
-                    <!-- <input type="text" class="university" placeholder="Enter Your University Name" name="uni_name"
-                        id="uni"> -->
-                    <select class="form-select university" id="uni" name="uni">
-                        {% for university in universities %}
-                        <option value="{{ university.id }}">{{ university.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="filter-btn center">
-                        <button id="advanced-search" style="background-color: transparent; border: none;" type="button"
-                            class="btn btn-primary grey" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            <i class="fa fa-bars" aria-hidden="true"></i>
-                        </button>
+                <div class="form-class-home">
+                    <div class="form-item-home">
+                        <div class="university-wrapper-home">
+                            <!-- <input type="text" class="university" placeholder="Enter Your University Name" name="uni_name"
+                                id="uni"> -->
+                            <select class="form-select university" id="uni" name="uni">
+                                {% for university in universities %}
+                                <option value="{{ university.id }}">{{ university.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-item-home">
+                        <div >
+                            <button id="advanced-search"  type="button" style=" height: 45px"
+                                class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i class="fa fa-bars" aria-hidden="true"> Filter </i>
+                            </button>
+                        </div>
+                    </div>
+                </div>          
             </div>
+            
             <div class="wrapper center">
-                <button id="search" type="submit">Search</button>
+                <button class="btn btn-primary" id="search" type="submit" style=" height: 45px; background-color: #0d6efd;
+                border-color: #0d6efd;">Search</button>
 
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
