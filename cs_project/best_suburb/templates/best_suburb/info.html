@@ -118,7 +118,7 @@
                         <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"height="20">
                     </div>
                     <div class="col-auto">
-                        <div>{{suburb.name}}, {{suburb.postcode}}</div>
+                        <div>{{suburb.name}}, VIC {{suburb.postcode}}</div>
                     </div>
                     <div class="col-auto">
                         <div>{{suburb.latitude}}&#176;{{suburb.hemisphere_latitude}},{{suburb.longitude}}&#176;{{suburb.hemisphere_longitude}}</div>
@@ -160,14 +160,22 @@
                 </p>
             </div>
         </div>
-        
-        <div class="col-auto">
-            <div class="recome_chart">
-                <p>{{recom_char|safe}}</p>
-    
+
+         <div class="col-auto">
+            <div class="average_chart">
+                <p>{{average_char|safe}}</p>
+
             </div>
-        </div>
+         </div>
+        
+
     </div>
+    <div class="col-auto">
+            <div class="average_chart">
+                <p>{{recom_char|safe}}</p>
+
+            </div>
+         </div>
 
     
     <h3 style="padding-left:100px;padding-top:50px">Add the most traveled places to see transport availability</h3>

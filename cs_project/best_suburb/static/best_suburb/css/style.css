@@ -219,6 +219,13 @@ body {
 .recome_chart {
    width: 100px;
    height: 200px;
+   padding-left: 3444px;
+    padding-bottom: 100px;
+}
+
+.average_chart {
+   width: 100px;
+   height: 200px;
    padding-left: 150px;
 }
 .item img {

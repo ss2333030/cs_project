@@ -10,6 +10,7 @@ from pyecharts.charts import Bar, Line, Gauge, Liquid
 from pyecharts import options as opts
 import pyecharts.options as opts
 from pyecharts.charts import Line
+from pyecharts.commons.utils import JsCode
 from pyecharts.faker import Faker
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse
@@ -368,16 +369,21 @@ def info(request):
     # suburbs_name = "Clayton"
 
     # context["char"] = myechar.render_embed()
-    myechar = get_crimerate_char()
-    recome = recom_char()
-    print(recome)
-    print("xxx")
-    print(request.GET)
+
+
     suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
 
+    # get the char
+    myechar = get_crimerate_char(suburb)
+    recome = recom_char()
+
+    average_char = get_average_char(suburb)
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, request.session["uni"])
+
+
+
     return render(
         request,
         "best_suburb/info.html",
@@ -385,18 +391,29 @@ def info(request):
             "suburb": convert_coordinates(suburb),
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
+            "average_char":average_char.render_embed(),
         },
     )
 
 
-def get_crimerate_char():
-    x_data = ["2012", "2014", "2016", "2018", "2020", "2022"]
-    y_data = [2, 4, 6, 8, 3, 4]
+def get_crimerate_char(suber_name):
+    item_color_js_2 = """new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
+                                            offset: 0,
+                                            color: 'rgb(129, 227, 238)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(25, 183, 207)'
+                                        }])"""
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
+    y_data = [suber_name.get('crime_rate_in_2013'), suber_name.get('crime_rate_in_2014'), suber_name.get('crime_rate_in_2015'),
+              suber_name.get('crime_rate_in_2016'), suber_name.get('crime_rate_in_2017'), suber_name.get('crime_rate_in_2018'),
+              suber_name.get('crime_rate_in_2019'),suber_name.get('crime_rate_in_2020'),suber_name.get('crime_rate_in_2021')]
 
     c = (
         Line(init_opts=opts.InitOpts(width="500px", height="300px"))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
+            itemstyle_opts=opts.ItemStyleOpts(color=JsCode(item_color_js_2)),
             series_name="crime rate",
             stack="total",
             y_axis=y_data,
@@ -404,16 +421,53 @@ def get_crimerate_char():
         )
         .set_global_opts(
             title_opts=opts.TitleOpts(
-                title="   Crime rate in ten year", pos_left="center"
+                title=suber_name.get('name')+" crime rate in ten year", pos_left="center"
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="90%"),
+            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
-                name="Crime rate(Percentage%)",
+                name="      Crime rate",
                 axistick_opts=opts.AxisTickOpts(is_show=True),
                 splitline_opts=opts.SplitLineOpts(is_show=True),
-                axislabel_opts=opts.LabelOpts(formatter="{value}%"),
+                axislabel_opts=opts.LabelOpts(formatter="{value}"),
+            ),
+            xaxis_opts=opts.AxisOpts(
+                type_="category", name="Years", boundary_gap=False
+            ),
+        )
+    )
+    return c
+
+
+
+def get_average_char(suber_name):
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
+    y_data = [suber_name.get('averagerent_in_2013'), suber_name.get('averagerent_in_2014'), suber_name.get('averagerent_in_2015'),
+              suber_name.get('averagerent_in_2016'), suber_name.get('averagerent_in_2017'), suber_name.get('averagerent_in_2018'),
+              suber_name.get('averagerent_in_2019'),suber_name.get('averagerent_in_2020'),suber_name.get('averagerent_in_2021')]
+
+    c = (
+        Line(init_opts=opts.InitOpts(width="500px", height="300px"))
+        .add_xaxis(xaxis_data=x_data)
+        .add_yaxis(
+            series_name="average rent",
+            stack="total",
+            y_axis=y_data,
+            label_opts=opts.LabelOpts(is_show=False),
+        )
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title=suber_name.get('name')+" average rent in ten year", pos_left="center"
+            ),
+            tooltip_opts=opts.TooltipOpts(trigger="axis"),
+            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
+            yaxis_opts=opts.AxisOpts(
+                type_="value",
+                name="      Average rent",
+                axistick_opts=opts.AxisTickOpts(is_show=True),
+                splitline_opts=opts.SplitLineOpts(is_show=True),
+                axislabel_opts=opts.LabelOpts(formatter="{value}$"),
             ),
             xaxis_opts=opts.AxisOpts(
                 type_="category", name="Years", boundary_gap=False
@@ -432,7 +486,7 @@ def recom_char():
                 title="  Recommendation Index",
                 pos_left="center",
                 title_textstyle_opts=opts.TextStyleOpts(color="red"),
-                #pos_bottom="17%", 
+                pos_bottom="13%",
             ),
         )
     )
