@@ -394,7 +394,7 @@ def get_crimerate_char():
     y_data = [2, 4, 6, 8, 3, 4]
 
     c = (
-        Line(init_opts=opts.InitOpts(width="750px", height="400px"))
+        Line(init_opts=opts.InitOpts(width="500px", height="300px"))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
             series_name="crime rate",
@@ -425,14 +425,14 @@ def get_crimerate_char():
 
 def recom_char():
     liquid = (
-        Liquid(init_opts=opts.InitOpts(width="600px", height="400px"))
+        Liquid(init_opts=opts.InitOpts(width="300px", height="300px"))
         .add("", [0.52, 0.44])
         .set_global_opts(
             title_opts=opts.TitleOpts(
                 title="  Recommendation Index",
                 pos_left="center",
                 title_textstyle_opts=opts.TextStyleOpts(color="red"),
-                pos_bottom="17%",
+                #pos_bottom="17%", 
             ),
         )
     )

@@ -195,7 +195,6 @@ body {
 }
 
 .col-sm-9 {
-    
     padding-top: 40px;
 }
 
@@ -230,11 +229,13 @@ body {
 }
 
 .Facility {
-    padding-left: 110px;
+    padding-top: 80px;
 }
 
+
 .suburb-info {
-    padding-left: 160px;
+    padding-top: 130px;
+    padding-left: 20px;
 
 }
 
@@ -277,6 +278,15 @@ body {
     
 }
 .form-class-home .form-item-home{
+    border-radius: 20px;
+    margin-inline: auto;
+}
+.form-class-info {
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.form-class-info .form-item-info{
     border-radius: 20px;
     margin-inline: auto;
 }
