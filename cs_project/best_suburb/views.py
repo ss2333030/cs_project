@@ -2,6 +2,8 @@ from ast import Sub
 # from asyncio.windows_events import NULL
 from http.client import HTTPResponse
 import imp
+
+from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
 from os import lstat
 from re import T
@@ -160,12 +162,25 @@ def get_qualified_suburbs(
 
         response = requests.request("GET", URL, headers=headers, data=payload).json()
 
+<<<<<<< HEAD
         photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
  
         photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
         e["photo"] = photo_url
         e["place_id"] = response["candidates"][0]["place_id"]
+=======
+        try:
+            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+            photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+>>>>>>> c0851b1e7d08463b6bd1f5923c677fc348de0f56
 
+
+            e["photo"] = photo_url
+            e["place_id"] = response["candidates"][0]["place_id"]
+
+        except:
+            e["photo"] = "/static/best_suburb/images/suburb.png"
+            e["place_id"] = response["candidates"][0]["place_id"]
         return e
 
     return map(filter(suburbs, condition), bind_suburb_to_google_map)
@@ -189,6 +204,7 @@ def get_photos(place_id: str):
     response = requests.request("GET", URL, headers=headers, data=payload).json()
 
     photos = []
+<<<<<<< HEAD
     if len(response["result"]["photos"]) == 0:
         photos.append("cs_project/best_suburb/static/best_suburb/images/suburb.png")
 
@@ -197,6 +213,15 @@ def get_photos(place_id: str):
         photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
         photos.append(photo)
 
+=======
+    try:
+        for i in range(len(response["result"]["photos"])):
+            photo_reference = response["result"]["photos"][i]["photo_reference"]
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            photos.append(photo)
+    except:
+        photos.append("/static/best_suburb/images/suburb.png")
+>>>>>>> c0851b1e7d08463b6bd1f5923c677fc348de0f56
     return photos
 
 
@@ -295,6 +320,7 @@ def suburbs(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+
     return JsonResponse(qualified_suburbs)
 
 
@@ -341,6 +367,9 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+    # print("qualixxxxx")
+    print(qualified_suburbs)
+    # print(qualified_suburbs[1])
 
     return render(
         request,
@@ -494,5 +523,34 @@ def recom_char():
             ),
         )
     )
+    max_crimerate = (Suburb.objects.all().aggregate(Max('crime_rate'))).get('crime_rate__max')
+    min_crimerate = (Suburb.objects.all().aggregate(Min('crime_rate'))).get('crime_rate__min')
+    max_averagerent = (Suburb.objects.all().aggregate(Max('average_rent'))).get('average_rent__max')
+    min_averagerent =( Suburb.objects.all().aggregate(Min('average_rent'))).get('average_rent__min')
+    print(max_crimerate)
+    print(min_crimerate)
+    print(max_averagerent)
+    print(min_averagerent)
 
     return liquid.render_embed()
+
+def recommended_system(qualified_suburbs):
+
+    new_list=[]
+    max_crimerate = Suburb.objects.all().aggregate(Max('crime_rate')).get('crime_rate__max')
+    min_crimerate = Suburb.objects.all().aggregate(Min('crime_rate')).get('crime_rate__min')
+    max_averagerent = Suburb.objects.all().aggregate(Max('average_rent')).get('average_rent__max')
+    min_averagerent = Suburb.objects.all().aggregate(Min('average_rent')).get('average_rent__min')
+
+
+    lenth=len(qualified_suburbs)
+    for i in range(0,lenth):
+        suburb=qualified_suburbs[i]
+
+    return new_list
+
+def get_suburb_score(suburb,max_crime,min_crime,max_rent,min_rent):
+    score=0
+    rent=suburb.get('average_rent')
+    crime=suburb.get('crime_rate')
+    return score

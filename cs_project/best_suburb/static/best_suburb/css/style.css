@@ -223,6 +223,10 @@ body {
     padding-bottom: 100px;
 }
 
+.crime_rate{
+   text-decoration: none;
+}
+
 .average_chart {
    width: 100px;
    height: 200px;
@@ -255,6 +259,8 @@ body {
     border-radius: 20px;
     margin-right: 20px;
     margin-top: 50px;
+
+
 }
 
 .form-class {
