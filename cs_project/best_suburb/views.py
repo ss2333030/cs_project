@@ -1,6 +1,8 @@
 from ast import Sub
 from http.client import HTTPResponse
 import imp
+
+from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
 from os import lstat
 from re import T
@@ -291,6 +293,7 @@ def suburbs(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+
     return JsonResponse(qualified_suburbs)
 
 
@@ -337,6 +340,9 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+    # print("qualixxxxx")
+    print(qualified_suburbs)
+    # print(qualified_suburbs[1])
 
     return render(
         request,
@@ -490,5 +496,34 @@ def recom_char():
             ),
         )
     )
+    max_crimerate = (Suburb.objects.all().aggregate(Max('crime_rate'))).get('crime_rate__max')
+    min_crimerate = (Suburb.objects.all().aggregate(Min('crime_rate'))).get('crime_rate__min')
+    max_averagerent = (Suburb.objects.all().aggregate(Max('average_rent'))).get('average_rent__max')
+    min_averagerent =( Suburb.objects.all().aggregate(Min('average_rent'))).get('average_rent__min')
+    print(max_crimerate)
+    print(min_crimerate)
+    print(max_averagerent)
+    print(min_averagerent)
 
     return liquid.render_embed()
+
+def recommended_system(qualified_suburbs):
+
+    new_list=[]
+    max_crimerate = Suburb.objects.all().aggregate(Max('crime_rate')).get('crime_rate__max')
+    min_crimerate = Suburb.objects.all().aggregate(Min('crime_rate')).get('crime_rate__min')
+    max_averagerent = Suburb.objects.all().aggregate(Max('average_rent')).get('average_rent__max')
+    min_averagerent = Suburb.objects.all().aggregate(Min('average_rent')).get('average_rent__min')
+
+
+    lenth=len(qualified_suburbs)
+    for i in range(0,lenth):
+        suburb=qualified_suburbs[i]
+
+    return new_list
+
+def get_suburb_score(suburb,max_crime,min_crime,max_rent,min_rent):
+    score=0
+    rent=suburb.get('average_rent')
+    crime=suburb.get('crime_rate')
+    return score
