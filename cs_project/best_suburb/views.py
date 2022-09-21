@@ -161,11 +161,17 @@ def get_qualified_suburbs(
 
         response = requests.request("GET", URL, headers=headers, data=payload).json()
 
-        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
-        photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        e["photo"] = photo_url
-        e["place_id"] = response["candidates"][0]["place_id"]
+        try:
+            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+            photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
 
+
+            e["photo"] = photo_url
+            e["place_id"] = response["candidates"][0]["place_id"]
+
+        except:
+            e["photo"] = "/static/best_suburb/images/suburb.png"
+            e["place_id"] = response["candidates"][0]["place_id"]
         return e
 
     return map(filter(suburbs, condition), bind_suburb_to_google_map)
@@ -189,12 +195,13 @@ def get_photos(place_id: str):
     response = requests.request("GET", URL, headers=headers, data=payload).json()
 
     photos = []
-
-    for i in range(len(response["result"]["photos"])):
-        photo_reference = response["result"]["photos"][i]["photo_reference"]
-        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        photos.append(photo)
-
+    try:
+        for i in range(len(response["result"]["photos"])):
+            photo_reference = response["result"]["photos"][i]["photo_reference"]
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            photos.append(photo)
+    except:
+        photos.append("/static/best_suburb/images/suburb.png")
     return photos
 
 
