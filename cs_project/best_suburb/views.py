@@ -162,17 +162,9 @@ def get_qualified_suburbs(
 
         response = requests.request("GET", URL, headers=headers, data=payload).json()
 
-<<<<<<< HEAD
-        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
- 
-        photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        e["photo"] = photo_url
-        e["place_id"] = response["candidates"][0]["place_id"]
-=======
         try:
             photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
             photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
->>>>>>> c0851b1e7d08463b6bd1f5923c677fc348de0f56
 
 
             e["photo"] = photo_url
@@ -204,16 +196,6 @@ def get_photos(place_id: str):
     response = requests.request("GET", URL, headers=headers, data=payload).json()
 
     photos = []
-<<<<<<< HEAD
-    if len(response["result"]["photos"]) == 0:
-        photos.append("cs_project/best_suburb/static/best_suburb/images/suburb.png")
-
-    for i in range(len(response["result"]["photos"])):
-        photo_reference = response["result"]["photos"][i]["photo_reference"]
-        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        photos.append(photo)
-
-=======
     try:
         for i in range(len(response["result"]["photos"])):
             photo_reference = response["result"]["photos"][i]["photo_reference"]
@@ -221,7 +203,6 @@ def get_photos(place_id: str):
             photos.append(photo)
     except:
         photos.append("/static/best_suburb/images/suburb.png")
->>>>>>> c0851b1e7d08463b6bd1f5923c677fc348de0f56
     return photos
 
 
@@ -414,14 +395,17 @@ def info(request):
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, request.session["uni"])
-
-
+    
+    uni = request.session["uni"]
+    university = University.objects.filter(id=uni).values()[0]    
+    uni_name = university.get("name")
 
     return render(
         request,
         "best_suburb/info.html",
         {
             "suburb": convert_coordinates(suburb),
+            "uni_name": uni_name,
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
             "average_char":average_char.render_embed(),
