@@ -22,6 +22,7 @@
     <!-- Django's specific syntax for linking files -->
     <script src="{% static 'best_suburb/javascript/jquery.range.js' %}"></script>
     <script src="{% static 'best_suburb/javascript/info.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -80,11 +81,11 @@
                         {% for photo in suburb.photos %}
                         {% if forloop.first%}
                         <div class="carousel-item active">
-                            <img src="{{photo}}" class="d-block w-70" alt="...">
+                            <img src="{{photo}}" class="d-block w-70" alt="..." style="width:550px;height:320px">
                         </div>
                         {% else %}
                         <div class="carousel-item">
-                            <img src="{{photo}}" class="d-block w-70" alt="...">
+                            <img src="{{photo}}" class="d-block w-70" alt="..."style="width:550px;height:320px">
                         </div>
                         {% endif %}
                         {% endfor %}
@@ -101,75 +102,84 @@
                     </button>
                 </div>
             </div>
+            
             <div class="col-auto">
-                <div class="chart">
-                    <p>{{crime_char|safe}}</p>
+                <div>
+                    <h2>{{ suburb.name }}</h2>
+                </div>
 
+                <div class="Facility">
+                    <h2>Facility</h2>
                 </div>
             </div>
-
-
-        </div>
-    </div>
-
-
-    <dl class="row">
-        <dt class="col-sm-3">
-            <div>
-                <h2>{{ suburb.name }}</h2>
-            </div>
-        </dt>
-        <dd class="col-sm-9">
-            <div class="list">
-                <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"
-                    height="20">
-                <ul>
-
-                    <div>{{suburb.name}}, {{suburb.postcode}}</div>
-                    <div>{{suburb.latitude}}&#176;{{suburb.hemisphere_latitude}},
-                        {{suburb.longitude}}&#176;{{suburb.hemisphere_longitude}}</div>
-                </ul>
-        </dd>
-    </dl>
-
-    <div class="Facility">
-        <h2>Facility</h2>
-    </div>
-
-    <div class="suburb-info">
-        <!--<ul class="list-inline">
-        <li class="list-inline-item">Crime rate: {{suburb.crime_rate}}</li>
-
-        <li class="list-inline-item">Distance from school: {{suburb.average_rent}}m</li>
-      </ul>-->
-
-        <div class="row">
-            <p>Crime rate: {{suburb.crime_rate}}</p>
-            <p>Distance from school: {{suburb.distance}} km</p>
-        </div>
-        <div class="row">
-
-            <p>Average Rent: ${{suburb.average_rent}}/per week</p>
-
-
             <div class="col-auto">
-                <p>Public transport access to univerisity: None</p>
-            </div>
-
-            <div class="col-auto">
-                <div class="recome_chart">
-                    <p>{{recom_char|safe}}</p>
-
+                <div class="row" style="padding-top: 10px;">
+                    <div class="col-auto">
+                        <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"height="20">
+                    </div>
+                    <div class="col-auto">
+                        <div>{{suburb.name}}, VIC {{suburb.postcode}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <div>{{suburb.latitude}}&#176;{{suburb.hemisphere_latitude}},{{suburb.longitude}}&#176;{{suburb.hemisphere_longitude}}</div>
+                    </div>
+                </div>
+                <div class="suburb-info">
+                    <!--<ul class="list-inline">
+                    <li class="list-inline-item">Crime rate: {{suburb.crime_rate}}</li>
+            
+                    <li class="list-inline-item">Distance from school: {{suburb.average_rent}}m</li>
+                  </ul>-->
+            
+                    <div class="row">
+                        <p>Crime rate: {{suburb.crime_rate}}</p>
+                        <p>Distance from school: {{suburb.distance}} km</p>
+                    </div>
+                    <div class="row">
+            
+                        <p>Average Rent: ${{suburb.average_rent}}/per week</p>
+            
+            
+                        <div class="col-auto">
+                            <p>Public transport access to univerisity: None</p>
+                        </div> 
+                    </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 
-    <div class="Facility">
-        <h3>Add the most traveled places to see transport availability</h3>
+    <h2 style="padding-left:100px;padding-top:50px">Suburb Data</h2>
+    <div class="row">
+        <div class="col-auto">
+            <div class="chart" >
+                <p>
+                    <div style="width:400px;height:280px">
+                    {{crime_char|safe}}
+                    </div>
+                </p>
+            </div>
+        </div>
+
+         <div class="col-auto">
+            <div class="average_chart">
+                <p>{{average_char|safe}}</p>
+
+            </div>
+         </div>
+        
+
     </div>
+    <div class="col-auto">
+            <div class="average_chart">
+                <p>{{recom_char|safe}}</p>
+
+            </div>
+         </div>
+
+    
+    <h3 style="padding-left:100px;padding-top:50px">Add the most traveled places to see transport availability</h3>
+    
 
 
 
@@ -230,52 +240,54 @@
         </table>
     </div> {% endcomment %}
 
-
-    <div class="container" style=" left:80px; top:850px;">
+<div class="travel-place">
+    <div class="container">
         <table class="_table">
             <thead>
                 <tr>
-                    <th>Most Traveled Places</th>
-                    <!-- <th>Phone</th>
-                      <th>Address</th> -->
-                    <th width="50px">
-                        <div class="action_container">
-                            <button class="success" onclick="create_tr('table_body')">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                    <div>
+                        <div >
+                            <label class="place-text">To:</label>
                         </div>
-                    </th>
+                        <div>
+                            <div class="input-group mb-3">
+                                <input type="text" list="locations" class="form-control" placeholder="location address" aria-label="location address">
+                                <datalist id="locations">
+                                    <option value="San Francisco">
+                                    <option value="New York">
+                                    <option value="Seattle">
+                                    <option value="Los Angeles">
+                                    <option value="Chicago">
+                                </datalist>
+                                <button class="btn btn-outline-primary" type="button" id="add-location" onclick="create_tr('table_body')">Add location</button>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
             </thead>
             <tbody id="table_body">
                 <tr>
-                    <form action="{% url 'info' %}" method="post">
-                        <td>
-
-                            <input id="unique_id" type="text" class="form_control" placeholder="To:">
-                            <!-- </td>
-                      <td>
-                        <input type="text" class="form_control" placeholder="+880177x-xxxxxx">
-                      </td>
-                      <td>
-                        <textarea class="form_control" placeholder="Enter Your Address..."></textarea>
-                      </td> -->
-                        <td>
-                            <div class="action_container">
-                                <button class="success" type="submit">
-                                    find
-                                </button>
-                            </div>
-                        <td>
-                            <div class="action_container">
-                                <button class="danger" onclick="remove_tr(this)">
-                                    <i class="fa fa-close"></i>
-                                </button>
-                            </div>
-                        </td>
+                  <td>
+                    <div class="form-class">
+                        <div class="form-item">
+                            <div class="border border-primary p-2 mb-2" style="width:500px; border-radius:5px">54 mins via bus 601</div>
+                        </div>
+                        <div class="form-item">
+                      
+                            <button class="btn btn-danger" style="height:42px" type="button" id="add-location" onclick="remove_tr(this)">Remove</button>
+                        </div>
+                    </div>
+                    
+                  </td>
                 </tr>
-                </form>
             </tbody>
         </table>
     </div>
-    {% endblock %}
+</div>
+    
+
+    
+    {% endblock %}  
+
+
+</body>
