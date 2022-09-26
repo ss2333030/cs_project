@@ -11,6 +11,7 @@ class UserInfo(models.Model):
     age = models.IntegerField()
 
 class University(models.Model):
+    objects = None
     id = models.TextField(db_column='Id', primary_key=True)  # Field name made lowercase.
     name = models.TextField(db_column='Name')  # Field name made lowercase.
     suburbname = models.TextField(db_column='Suburbname')  # Field name made lowercase.

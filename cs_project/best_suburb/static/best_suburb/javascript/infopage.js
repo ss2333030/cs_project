@@ -5,6 +5,12 @@ function create_tr(table_id) {
     table_body.append(tr_clone);
     clean_first_tr(table_body.firstElementChild);
 }
+
+function create_child(){
+    
+}
+
+
 function clean_first_tr(firstTr) {
     let children = firstTr.children;
     

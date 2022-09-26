@@ -1,6 +1,9 @@
 from ast import Sub
+# from asyncio.windows_events import NULL
 from http.client import HTTPResponse
 import imp
+
+from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
 from os import lstat
 from re import T
@@ -10,6 +13,7 @@ from pyecharts.charts import Bar, Line, Gauge, Liquid
 from pyecharts import options as opts
 import pyecharts.options as opts
 from pyecharts.charts import Line
+from pyecharts.commons.utils import JsCode
 from pyecharts.faker import Faker
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse
@@ -157,12 +161,18 @@ def get_qualified_suburbs(
         headers = {}
 
         response = requests.request("GET", URL, headers=headers, data=payload).json()
-        print(response)
-        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
-        photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        e["photo"] = photo_url
-        e["place_id"] = response["candidates"][0]["place_id"]
 
+        try:
+            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+            photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+
+
+            e["photo"] = photo_url
+            e["place_id"] = response["candidates"][0]["place_id"]
+
+        except:
+            e["photo"] = "/static/best_suburb/images/suburb.png"
+            e["place_id"] = response["candidates"][0]["place_id"]
         return e
 
     return map(filter(suburbs, condition), bind_suburb_to_google_map)
@@ -186,12 +196,13 @@ def get_photos(place_id: str):
     response = requests.request("GET", URL, headers=headers, data=payload).json()
 
     photos = []
-
-    for i in range(len(response["result"]["photos"])):
-        photo_reference = response["result"]["photos"][i]["photo_reference"]
-        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        photos.append(photo)
-
+    try:
+        for i in range(len(response["result"]["photos"])):
+            photo_reference = response["result"]["photos"][i]["photo_reference"]
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            photos.append(photo)
+    except:
+        photos.append("/static/best_suburb/images/suburb.png")
     return photos
 
 
@@ -290,6 +301,7 @@ def suburbs(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+
     return JsonResponse(qualified_suburbs)
 
 
@@ -336,6 +348,9 @@ def list(request):
     qualified_suburbs = get_qualified_suburbs(
         uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
     )
+    # print("qualixxxxx")
+    print(qualified_suburbs)
+    # print(qualified_suburbs[1])
 
     return render(
         request,
@@ -368,35 +383,54 @@ def info(request):
     # suburbs_name = "Clayton"
 
     # context["char"] = myechar.render_embed()
-    myechar = get_crimerate_char()
-    recome = recom_char()
-    print(recome)
-    print("xxx")
-    print(request.GET)
+
+
     suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
 
+    # get the char
+    myechar = get_crimerate_char(suburb)
+    recome = recom_char()
+
+    average_char = get_average_char(suburb)
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, request.session["uni"])
+    
+    uni = request.session["uni"]
+    university = University.objects.filter(id=uni).values()[0]    
+    uni_name = university.get("name")
+
     return render(
         request,
         "best_suburb/info.html",
         {
             "suburb": convert_coordinates(suburb),
+            "uni_name": uni_name,
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
+            "average_char":average_char.render_embed(),
         },
     )
 
 
-def get_crimerate_char():
-    x_data = ["2012", "2014", "2016", "2018", "2020", "2022"]
-    y_data = [2, 4, 6, 8, 3, 4]
+def get_crimerate_char(suber_name):
+    item_color_js_2 = """new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
+                                            offset: 0,
+                                            color: 'rgb(129, 227, 238)'
+                                        }, {
+                                            offset: 1,
+                                            color: 'rgb(25, 183, 207)'
+                                        }])"""
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
+    y_data = [suber_name.get('crime_rate_in_2013'), suber_name.get('crime_rate_in_2014'), suber_name.get('crime_rate_in_2015'),
+              suber_name.get('crime_rate_in_2016'), suber_name.get('crime_rate_in_2017'), suber_name.get('crime_rate_in_2018'),
+              suber_name.get('crime_rate_in_2019'),suber_name.get('crime_rate_in_2020'),suber_name.get('crime_rate_in_2021')]
 
     c = (
-        Line(init_opts=opts.InitOpts(width="750px", height="400px"))
+        Line(init_opts=opts.InitOpts(width="500px", height="300px"))
         .add_xaxis(xaxis_data=x_data)
         .add_yaxis(
+            itemstyle_opts=opts.ItemStyleOpts(color=JsCode(item_color_js_2)),
             series_name="crime rate",
             stack="total",
             y_axis=y_data,
@@ -404,16 +438,53 @@ def get_crimerate_char():
         )
         .set_global_opts(
             title_opts=opts.TitleOpts(
-                title="   Crime rate in ten year", pos_left="center"
+                title=suber_name.get('name')+" crime rate in ten year", pos_left="center"
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="90%"),
+            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
-                name="Crime rate(Percentage%)",
+                name="      Crime rate",
                 axistick_opts=opts.AxisTickOpts(is_show=True),
                 splitline_opts=opts.SplitLineOpts(is_show=True),
-                axislabel_opts=opts.LabelOpts(formatter="{value}%"),
+                axislabel_opts=opts.LabelOpts(formatter="{value}"),
+            ),
+            xaxis_opts=opts.AxisOpts(
+                type_="category", name="Years", boundary_gap=False
+            ),
+        )
+    )
+    return c
+
+
+
+def get_average_char(suber_name):
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
+    y_data = [suber_name.get('averagerent_in_2013'), suber_name.get('averagerent_in_2014'), suber_name.get('averagerent_in_2015'),
+              suber_name.get('averagerent_in_2016'), suber_name.get('averagerent_in_2017'), suber_name.get('averagerent_in_2018'),
+              suber_name.get('averagerent_in_2019'),suber_name.get('averagerent_in_2020'),suber_name.get('averagerent_in_2021')]
+
+    c = (
+        Line(init_opts=opts.InitOpts(width="500px", height="300px"))
+        .add_xaxis(xaxis_data=x_data)
+        .add_yaxis(
+            series_name="average rent",
+            stack="total",
+            y_axis=y_data,
+            label_opts=opts.LabelOpts(is_show=False),
+        )
+        .set_global_opts(
+            title_opts=opts.TitleOpts(
+                title=suber_name.get('name')+" average rent in ten year", pos_left="center"
+            ),
+            tooltip_opts=opts.TooltipOpts(trigger="axis"),
+            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
+            yaxis_opts=opts.AxisOpts(
+                type_="value",
+                name="      Average rent",
+                axistick_opts=opts.AxisTickOpts(is_show=True),
+                splitline_opts=opts.SplitLineOpts(is_show=True),
+                axislabel_opts=opts.LabelOpts(formatter="{value}$"),
             ),
             xaxis_opts=opts.AxisOpts(
                 type_="category", name="Years", boundary_gap=False
@@ -425,16 +496,45 @@ def get_crimerate_char():
 
 def recom_char():
     liquid = (
-        Liquid(init_opts=opts.InitOpts(width="600px", height="400px"))
+        Liquid(init_opts=opts.InitOpts(width="300px", height="300px"))
         .add("", [0.52, 0.44])
         .set_global_opts(
             title_opts=opts.TitleOpts(
                 title="  Recommendation Index",
                 pos_left="center",
                 title_textstyle_opts=opts.TextStyleOpts(color="red"),
-                pos_bottom="17%",
+                pos_bottom="13%",
             ),
         )
     )
+    max_crimerate = (Suburb.objects.all().aggregate(Max('crime_rate'))).get('crime_rate__max')
+    min_crimerate = (Suburb.objects.all().aggregate(Min('crime_rate'))).get('crime_rate__min')
+    max_averagerent = (Suburb.objects.all().aggregate(Max('average_rent'))).get('average_rent__max')
+    min_averagerent =( Suburb.objects.all().aggregate(Min('average_rent'))).get('average_rent__min')
+    print(max_crimerate)
+    print(min_crimerate)
+    print(max_averagerent)
+    print(min_averagerent)
 
     return liquid.render_embed()
+
+def recommended_system(qualified_suburbs):
+
+    new_list=[]
+    max_crimerate = Suburb.objects.all().aggregate(Max('crime_rate')).get('crime_rate__max')
+    min_crimerate = Suburb.objects.all().aggregate(Min('crime_rate')).get('crime_rate__min')
+    max_averagerent = Suburb.objects.all().aggregate(Max('average_rent')).get('average_rent__max')
+    min_averagerent = Suburb.objects.all().aggregate(Min('average_rent')).get('average_rent__min')
+
+
+    lenth=len(qualified_suburbs)
+    for i in range(0,lenth):
+        suburb=qualified_suburbs[i]
+
+    return new_list
+
+def get_suburb_score(suburb,max_crime,min_crime,max_rent,min_rent):
+    score=0
+    rent=suburb.get('average_rent')
+    crime=suburb.get('crime_rate')
+    return score
