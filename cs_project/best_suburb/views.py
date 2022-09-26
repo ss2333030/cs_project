@@ -157,7 +157,7 @@ def get_qualified_suburbs(
         headers = {}
 
         response = requests.request("GET", URL, headers=headers, data=payload).json()
-
+        print(response)
         photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
         photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
         e["photo"] = photo_url
