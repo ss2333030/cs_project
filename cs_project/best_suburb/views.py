@@ -1,8 +1,8 @@
 from ast import Sub
-# from asyncio.windows_events import NULL
 from http.client import HTTPResponse
 import imp
-
+from turtle import end_fill
+from googlemaps import Client
 from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
 from os import lstat
@@ -24,12 +24,19 @@ from typing import List, Type, TypeVar, Callable
 import requests
 import json
 
+# First - level separator |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+# Second - level separator ################################################################################################
+# Third - level separator =================================================================================================
+
 
 T = TypeVar("T")
 U = TypeVar("U")
 
-################################# Helper functions and structures ###############################
+# ||||||||||||||||||||||||| Helper functions and structures |||||||||||||||||||||||||||||||||
+
+# ####################### Declare the API key and a new instance of goole map ############
 API_KEY = "AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
+google_map = Client(key=API_KEY)
 
 
 def filter(lst: List[T], f: Callable[[T], bool]):
@@ -166,7 +173,6 @@ def get_qualified_suburbs(
             photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
             photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
 
-
             e["photo"] = photo_url
             e["place_id"] = response["candidates"][0]["place_id"]
 
@@ -233,7 +239,58 @@ def convert_coordinates(e: Suburb) -> Suburb:
     return e
 
 
-#################################### Views #######################################################
+# ||||||||||||||||||||||||||||||||||| Request handlers |||||||||||||||||||||||||||||||||||||||||||||||||||
+def direction(request):
+    """Request handler for getting information about public transport."""
+
+    # Get the place id of the current suburb and the entered location
+    suburb_place_id = request.GET.get("suburb_place_id")
+    desired_location_place_id = request.GET.get("desired_location_place_id")
+
+    # Request google map to get a list of routes, but we will only the first (optimal) route
+    routes = google_map.directions(
+        f"place_id:{suburb_place_id}",
+        f"place_id:{desired_location_place_id}",
+        "transit",
+    )
+
+    start_address = routes[0]["legs"][0]["start_address"]
+    end_address = routes[0]["legs"][0]["end_address"]
+    distance = routes[0]["legs"][0]["distance"]
+    duration = routes[0]["legs"][0]["duration"]
+    details = []
+
+    for i in range(len(routes[0]["legs"][0]["steps"])):
+        if routes[0]["legs"][0]["steps"]["travel_mode"] == "TRANSIT":
+            details.append(
+                {
+                    "duration": routes[0]["legs"][0]["steps"]["duration"],
+                    "departure_stop": routes[0]["legs"][0]["steps"]["transit_details"][
+                        "departure_stop"
+                    ]["name"],
+                    "arrival_stop": routes[0]["legs"][0]["steps"]["transit_details"][
+                        "arrival_stop"
+                    ]["name"],
+                    "type": routes[0]["legs"][0]["steps"]["transit_details"]["lines"][
+                        "vehicle"
+                    ]["name"],
+                    "transit_line_name": routes[0]["legs"][0]["steps"][
+                        "transit_details"
+                    ]["lines"]["name"],
+                    "headsign": routes[0]["legs"][0]["steps"]["transit_details"][
+                        "headsign"
+                    ],
+                }
+            )
+        else:
+            details.append(
+                {
+                    "duration": routes[0]["legs"][0]["steps"]["duration"],
+                    "distance": routes[0]["legs"][0]["steps"]["duration"],
+                }
+            )
+
+
 def places(request):
     """Request handler for getting a list of places."""
 
@@ -384,7 +441,6 @@ def info(request):
 
     # context["char"] = myechar.render_embed()
 
-
     suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
 
     # get the char
@@ -395,9 +451,9 @@ def info(request):
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, request.session["uni"])
-    
+
     uni = request.session["uni"]
-    university = University.objects.filter(id=uni).values()[0]    
+    university = University.objects.filter(id=uni).values()[0]
     uni_name = university.get("name")
 
     return render(
@@ -408,7 +464,7 @@ def info(request):
             "uni_name": uni_name,
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
-            "average_char":average_char.render_embed(),
+            "average_char": average_char.render_embed(),
         },
     )
 
@@ -421,10 +477,18 @@ def get_crimerate_char(suber_name):
                                             offset: 1,
                                             color: 'rgb(25, 183, 207)'
                                         }])"""
-    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
-    y_data = [suber_name.get('crime_rate_in_2013'), suber_name.get('crime_rate_in_2014'), suber_name.get('crime_rate_in_2015'),
-              suber_name.get('crime_rate_in_2016'), suber_name.get('crime_rate_in_2017'), suber_name.get('crime_rate_in_2018'),
-              suber_name.get('crime_rate_in_2019'),suber_name.get('crime_rate_in_2020'),suber_name.get('crime_rate_in_2021')]
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]
+    y_data = [
+        suber_name.get("crime_rate_in_2013"),
+        suber_name.get("crime_rate_in_2014"),
+        suber_name.get("crime_rate_in_2015"),
+        suber_name.get("crime_rate_in_2016"),
+        suber_name.get("crime_rate_in_2017"),
+        suber_name.get("crime_rate_in_2018"),
+        suber_name.get("crime_rate_in_2019"),
+        suber_name.get("crime_rate_in_2020"),
+        suber_name.get("crime_rate_in_2021"),
+    ]
 
     c = (
         Line(init_opts=opts.InitOpts(width="500px", height="300px"))
@@ -438,7 +502,8 @@ def get_crimerate_char(suber_name):
         )
         .set_global_opts(
             title_opts=opts.TitleOpts(
-                title=suber_name.get('name')+" crime rate in ten year", pos_left="center"
+                title=suber_name.get("name") + " crime rate in ten year",
+                pos_left="center",
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
             legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
@@ -457,12 +522,19 @@ def get_crimerate_char(suber_name):
     return c
 
 
-
 def get_average_char(suber_name):
-    x_data = ["2013", "2014", "2015", "2016", "2017", "2018","2019","2020","2021"]
-    y_data = [suber_name.get('averagerent_in_2013'), suber_name.get('averagerent_in_2014'), suber_name.get('averagerent_in_2015'),
-              suber_name.get('averagerent_in_2016'), suber_name.get('averagerent_in_2017'), suber_name.get('averagerent_in_2018'),
-              suber_name.get('averagerent_in_2019'),suber_name.get('averagerent_in_2020'),suber_name.get('averagerent_in_2021')]
+    x_data = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]
+    y_data = [
+        suber_name.get("averagerent_in_2013"),
+        suber_name.get("averagerent_in_2014"),
+        suber_name.get("averagerent_in_2015"),
+        suber_name.get("averagerent_in_2016"),
+        suber_name.get("averagerent_in_2017"),
+        suber_name.get("averagerent_in_2018"),
+        suber_name.get("averagerent_in_2019"),
+        suber_name.get("averagerent_in_2020"),
+        suber_name.get("averagerent_in_2021"),
+    ]
 
     c = (
         Line(init_opts=opts.InitOpts(width="500px", height="300px"))
@@ -475,7 +547,8 @@ def get_average_char(suber_name):
         )
         .set_global_opts(
             title_opts=opts.TitleOpts(
-                title=suber_name.get('name')+" average rent in ten year", pos_left="center"
+                title=suber_name.get("name") + " average rent in ten year",
+                pos_left="center",
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
             legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
@@ -507,10 +580,18 @@ def recom_char():
             ),
         )
     )
-    max_crimerate = (Suburb.objects.all().aggregate(Max('crime_rate'))).get('crime_rate__max')
-    min_crimerate = (Suburb.objects.all().aggregate(Min('crime_rate'))).get('crime_rate__min')
-    max_averagerent = (Suburb.objects.all().aggregate(Max('average_rent'))).get('average_rent__max')
-    min_averagerent =( Suburb.objects.all().aggregate(Min('average_rent'))).get('average_rent__min')
+    max_crimerate = (Suburb.objects.all().aggregate(Max("crime_rate"))).get(
+        "crime_rate__max"
+    )
+    min_crimerate = (Suburb.objects.all().aggregate(Min("crime_rate"))).get(
+        "crime_rate__min"
+    )
+    max_averagerent = (Suburb.objects.all().aggregate(Max("average_rent"))).get(
+        "average_rent__max"
+    )
+    min_averagerent = (Suburb.objects.all().aggregate(Min("average_rent"))).get(
+        "average_rent__min"
+    )
     print(max_crimerate)
     print(min_crimerate)
     print(max_averagerent)
@@ -518,23 +599,32 @@ def recom_char():
 
     return liquid.render_embed()
 
+
 def recommended_system(qualified_suburbs):
 
-    new_list=[]
-    max_crimerate = Suburb.objects.all().aggregate(Max('crime_rate')).get('crime_rate__max')
-    min_crimerate = Suburb.objects.all().aggregate(Min('crime_rate')).get('crime_rate__min')
-    max_averagerent = Suburb.objects.all().aggregate(Max('average_rent')).get('average_rent__max')
-    min_averagerent = Suburb.objects.all().aggregate(Min('average_rent')).get('average_rent__min')
+    new_list = []
+    max_crimerate = (
+        Suburb.objects.all().aggregate(Max("crime_rate")).get("crime_rate__max")
+    )
+    min_crimerate = (
+        Suburb.objects.all().aggregate(Min("crime_rate")).get("crime_rate__min")
+    )
+    max_averagerent = (
+        Suburb.objects.all().aggregate(Max("average_rent")).get("average_rent__max")
+    )
+    min_averagerent = (
+        Suburb.objects.all().aggregate(Min("average_rent")).get("average_rent__min")
+    )
 
-
-    lenth=len(qualified_suburbs)
-    for i in range(0,lenth):
-        suburb=qualified_suburbs[i]
+    lenth = len(qualified_suburbs)
+    for i in range(0, lenth):
+        suburb = qualified_suburbs[i]
 
     return new_list
 
-def get_suburb_score(suburb,max_crime,min_crime,max_rent,min_rent):
-    score=0
-    rent=suburb.get('average_rent')
-    crime=suburb.get('crime_rate')
+
+def get_suburb_score(suburb, max_crime, min_crime, max_rent, min_rent):
+    score = 0
+    rent = suburb.get("average_rent")
+    crime = suburb.get("crime_rate")
     return score
