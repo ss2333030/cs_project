@@ -10,10 +10,11 @@ sends back the response to the user.
 __author__ = "Feng Ji & Ngok Yu"
 
 from ast import Sub
-from http.client import HTTPResponse
+from logging.handlers import QueueListener
+from cairo import Status
+from django.http import HttpResponse
 import imp
 from json.encoder import INFINITY
-from turtle import distance, end_fill
 from googlemaps import Client
 from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
@@ -32,7 +33,7 @@ from django.shortcuts import render, HttpResponse
 import requests
 import math
 from .models import Suburb, University
-from typing import List, Type, TypeVar, Callable
+from typing import Dict, List, Type, TypeVar, Callable
 import requests
 import json
 
@@ -127,81 +128,78 @@ def haversine_distance(l1: Location, l2: Location) -> float:
     return d
 
 
-#     return photos
-# def get_photos(suburb: str):
-#     suburb = Suburb.objects.filter(id=suburb)[0]
-#     URL = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input={suburb.name}&inputtype=textquery&locationbias=circle%3A2000%40{suburb.latitude}%2C{suburb.longitude}&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key={API_KEY}"
-#     payload = {}
-#     headers = {}
-
-#     response = requests.request("GET", URL, headers=headers, data=payload).json()
-#     photos = []
-
-#     for i in range(len(response["candidates"]["photos"])):
-#         photo_reference = response["candidates"]["photos"][i]["photo_reference"]
-#         PHOTO_URL = f"https://maps.googleapis.com/maps/api/place/photo?&photo_reference={photo_reference}&key={API_KEY}"
-#         payload_2 = {}
-#         headers_2 = {}
-#         response = requests.request("GET", PHOTO_URL, headers=headers_2, data=payload_2)
-#         photos.append(response.text)
-
-#     return photos
-
-
-def get_qualified_suburbs(uni_id: int,rent_min: int,rent_max: int,crime_rate_max: int,distance_min: int,distance_max: int) -> List[Suburb]:
-    """ Return the list of suburbs that meet the conditions specified by the user.
-    
-    :input uni_id:
+def add_photo(s: dict) -> dict:
+    """ Add one photo to the given suburb. In this way, 
+        we can see a photo of the suburb on the list page.
     """
 
-    # Get the university
-    university = University.objects.filter(id=uni_id)[0]
+    # This builds the URL required by Google Maps Platform - Places API - Place Search - Find Place
+    URL = (
+        "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
+        + s["name"]
+        + "&inputtype=textquery&locationbias=circle%3A2000%40"
+        + str(s["latitude"])
+        + "%2C"
+        + str(s["longitude"])
+        + "&fields=place_id%2Cphotos&key="
+        + API_KEY
+    )
 
-    # Get the list of qualified suburbs
+    # Send a GET request to Google Maps Platform - Places API - Place Search - Find Place
+    response = requests.request("GET", URL).json()
+
+    if len(response["candidates"]) < 1: # If the API didn't find the given suburb at all
+        s["place_id"] = ""  # This represents that this suburb doesn't have a place id
+        # Use the default photo instead
+        s["photo"] = "/static/best_suburb/images/suburb.png"
+    elif len(response["candidates"][0]["photos"]) < 1:  # If the API didn't return any photos
+        s["place_id"] = response["candidates"][0]["place_id"]
+        # Use the default photo instead
+        s["photo"] = "/static/best_suburb/images/suburb.png"
+    else:
+        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+        # Build the URL for the photo
+        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+        s["place_id"] = response["candidates"][0]["place_id"]
+        s["photo"] = photo
+
+    return s
+
+
+def get_qualified_suburbs(uni_id: int, rent_min: int, rent_max: int, crime_rate_max: int, distance_min: int, distance_max: int) -> List[dict]:
+    """ Return the list of suburbs that meet the conditions specified by the user.
+
+    :input uni_id: the database ID of the university
+    :input rent_min: minimum average rent
+    :input rent_max: maximum average rent
+    :input crime_rate_max: maximum crime rate
+    :input distance_min: minimum distance
+    :input distance_max: maximum distance
+    :output: a list of Suburb objects
+    """
+
+    # Find the University object whose id equals to uni_id
+    university = University.objects.get(id=uni_id)
+
+    # Get the list of suburbs that meet the specified average rent and crime rate
     suburbs = Suburb.objects.filter(
-        average_rent__gte=rent_min,
-        average_rent__lte=rent_max,
-        crime_rate__lte=crime_rate_max,
-    ).values()
+        average_rent__gte=rent_min, average_rent__lte=rent_max, crime_rate__lte=crime_rate_max).values()
 
-    # Filter suburbs by distance
-    def condition(e: Suburb):
+    # Filter the suburbs again by distance
+    def condition(e: dict) -> bool:
+        # Get the location of the suburb
         l1 = Location(e["latitude"], e["longitude"])
+        # Get the location of the university
         l2 = Location(university.latitude, university.longitude)
-        return distance_min <= haversine_distance(l1, l2) <= distance_max
+        # Add distance to the suburb
+        e["distance"] = haversine_distance(l1, l2)
+        return distance_min <= e["distance"] <= distance_max
 
-    # Add a photo property to the suburbs
+    # Get the list of suburbs that meet the specified average rent, distance, and crime rate
+    results = filter(suburbs, condition)
 
-    def bind_suburb_to_google_map(e: Suburb) -> Suburb:
-        URL = (
-            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
-            + e["name"]
-            + "&inputtype=textquery&locationbias=circle%3A2000%40"
-            + str(e["latitude"])
-            + "%2C"
-            + str(e["longitude"])
-            + "&fields=formatted_address%2Cname%2Crating%2Cplace_id%2Cphotos&key="
-            + API_KEY
-        )
-        payload = {}
-        headers = {}
-
-        response = requests.request(
-            "GET", URL, headers=headers, data=payload).json()
-
-        try:
-            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
-            photo_url = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-
-            e["photo"] = photo_url
-            e["place_id"] = response["candidates"][0]["place_id"]
-
-        except:
-            e["photo"] = "/static/best_suburb/images/suburb.png"
-            e["place_id"] = response["candidates"][0]["place_id"]
-        return e
-
-    return map(filter(suburbs, condition), bind_suburb_to_google_map)
+    # Add one photo to each suburb
+    return map(results, add_photo)
 
 
 def get_distance(suburb: Suburb, uni: str):
@@ -272,7 +270,7 @@ def validate_input(uni_id: str, distance_min: str, distance_max: str, crime_rate
     rent_max = int(rent_max)
 
     # Validate the provided university ID
-    university = University.objects.get(uni_id)
+    university = University.objects.get(id=uni_id)
     if university is None:
         raise ValueError("The provided university ID is incorrect!")
 
@@ -301,12 +299,12 @@ def validate_input(uni_id: str, distance_min: str, distance_max: str, crime_rate
     def convert_max(x): return INFINITY if x < 0 else x
 
     return {
-        uni_id: uni_id,
-        distance_min: convert_min(distance_min),
-        distance_max: convert_max(distance_max),
-        crime_rate_max: convert_max(crime_rate_max),
-        rent_min: convert_min(rent_min),
-        rent_max: convert_max(rent_max)
+        "uni_id": uni_id,
+        "distance_min": convert_min(distance_min),
+        "distance_max": convert_max(distance_max),
+        "crime_rate_max": convert_max(crime_rate_max),
+        "rent_min": convert_min(rent_min),
+        "rent_max": convert_max(rent_max)
     }
 
 # ||||||||||||||||||||||||||||||||||| Request handlers |||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -374,22 +372,19 @@ def places(request):
 
     payload = {}
     headers = {}
-    response = requests.request("GET", URL, headers=headers, data=payload).json()
-
+    response = requests.request(
+        "GET", URL, headers=headers, data=payload).json()
 
     return JsonResponse(response)
 
 
 def index(request):
-    """Request handler for the path "/". This function will be
-    called whenever the client requests the path "/".
+    """ Request handler for the path "/". It sends back the home page to the user.
+    This function will be called whenever the user makes a request to the path "/".
     """
 
-    # This returns the page "index.html"
-    return render(
-        request, "best_suburb/index.html", {
-            "universities": University.objects.all()}
-    )
+    # Send back the page "index.html"
+    return render(request, "best_suburb/index.html", {"universities": University.objects.all().values()})
 
 
 def suburbs(request):
@@ -409,7 +404,7 @@ def suburbs(request):
     # Check if the input values are valid or not and convert the input values into appropriate format
     try:
         parameters = validate_input(
-            request.GET.get("uni"),
+            request.GET.get("uni_id"),
             request.GET.get("distance_min"),
             request.GET.get("distance_max"),
             request.GET.get("crime_rate_max"),
@@ -417,9 +412,9 @@ def suburbs(request):
             request.GET.get("rent_max"),
         )
     except ValueError or TypeError:  # Incorrect input
-        return HTTPResponse("Sorry, we couldn't find what you're looking for.", status=404)
+        return HttpResponse(status=404)
     except Exception:  # Something went wrong
-        return HTTPResponse("Sorry, something went wrong.", status=400)
+        return HttpResponse(status=400)
 
     # Get the list of suburbs that meet given conditions
     qualified_suburbs = get_qualified_suburbs(
@@ -431,8 +426,13 @@ def suburbs(request):
         parameters["distance_max"]
     )
 
+    # Convert the list of suburbs into a python list
+    data = []
+    for i in range(len(qualified_suburbs)):
+        data.append(qualified_suburbs[i])
+
     # Return the list of suburbs in JSON format
-    return JsonResponse(qualified_suburbs)
+    return JsonResponse(data, safe=False)
 
 
 def list(request):
@@ -445,7 +445,9 @@ def list(request):
     :output: a response that contains the list page.
     """
 
-    return render(request, "best_suburb/list.html")
+    return render(request, "best_suburb/list.html", {
+        "universities": University.objects.all().values()
+    })
 
 
 def info(request):
@@ -469,7 +471,7 @@ def info(request):
 
     # context["char"] = myechar.render_embed()
 
-    suburb = Suburb.objects.filter(id=request.GET.get("suburb")).values()[0]
+    suburb = Suburb.objects.filter(id=request.GET.get("suburb_id")).values()[0]
 
     # get the char
     myechar = get_crimerate_char(suburb)
