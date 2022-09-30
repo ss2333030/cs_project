@@ -7,7 +7,10 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("list", views.list, name="list"),
     path("info", views.info, name="info"),
-    path("places", views.places, name="places")
-    #path("addUni/",views.addUni),
+    path("places", views.places, name="places"),
+    path("direction", views.direction, name="direction")
+    
+    
+        #path("addUni/",views.addUni),
     # path("search", views.search, name="search"),
 ]
