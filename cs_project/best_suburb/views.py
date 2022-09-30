@@ -371,10 +371,12 @@ def places(request):
         + request.GET.get("place")
         + "&ipbias&components=country:au&key=AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
     )
+
     payload = {}
     headers = {}
-    response = requests.request(
-        "GET", URL, headers=headers, data=payload).json()
+    response = requests.request("GET", URL, headers=headers, data=payload).json()
+
+
     return JsonResponse(response)
 
 
