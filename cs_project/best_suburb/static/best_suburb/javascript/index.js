@@ -9,9 +9,17 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector("#uni_name_advanced").value = document.querySelector("#uni_name").value;
     };
 
+
 });
 
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 });
+
+document.addEventListener("DOMContentLoaded", () =>{
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+           });
+        });
