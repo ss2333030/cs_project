@@ -1,4 +1,5 @@
 from ast import Sub
+# from asyncio.windows_events import NULL
 from http.client import HTTPResponse
 import imp
 
@@ -394,14 +395,17 @@ def info(request):
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, request.session["uni"])
-
-
+    
+    uni = request.session["uni"]
+    university = University.objects.filter(id=uni).values()[0]    
+    uni_name = university.get("name")
 
     return render(
         request,
         "best_suburb/info.html",
         {
             "suburb": convert_coordinates(suburb),
+            "uni_name": uni_name,
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
             "average_char":average_char.render_embed(),
