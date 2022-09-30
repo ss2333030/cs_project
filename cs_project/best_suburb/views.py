@@ -1,7 +1,19 @@
+"""
+This file defines the controller part of the MVC architecture.
+
+This module defines a set of HTTP request handlers for handling
+HTTP requests made by the user. Each request handler handles requests
+sent by the user to a certain path. It processes the request and then 
+sends back the response to the user.
+"""
+
+__author__ = "Feng Ji & Ngok Yu"
+
 from ast import Sub
 from http.client import HTTPResponse
 import imp
-from turtle import end_fill
+from json.encoder import INFINITY
+from turtle import distance, end_fill
 from googlemaps import Client
 from django.db.models import Max, Min
 from multiprocessing.sharedctypes import Value
@@ -24,46 +36,69 @@ from typing import List, Type, TypeVar, Callable
 import requests
 import json
 
+T = TypeVar("T")
+U = TypeVar("U")
+
 # First - level separator |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # Second - level separator ################################################################################################
 # Third - level separator =================================================================================================
 
 
-T = TypeVar("T")
-U = TypeVar("U")
+# ||||||||||||||||||||||||||| Helper functions and structures |||||||||||||||||||||||||||||||||
 
-# ||||||||||||||||||||||||| Helper functions and structures |||||||||||||||||||||||||||||||||
-
-# ####################### Declare the API key and a new instance of goole map ############
+# ####################### Declare the API key and a new instance of goole map ################
 API_KEY = "AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
 google_map = Client(key=API_KEY)
 
-
-def filter(lst: List[T], f: Callable[[T], bool]):
-    return (
-        lst
-        if len(lst) == 0
-        else ([lst[0]] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:], f))
-    )
+INFINITY = 10000000  # A constant that represents infinity in this app
+UNDEFINED = -1  # A constant that represents undefined in this app
 
 
-def map(lst: List[T], f: Callable[[T], U]):
+def filter(lst: List[T], f: Callable[[T], bool]) -> List[T]:
+    """ A generic function for filtering elements in the input list.
+
+    :input lst: a list of elements of type T. For example, T can be int, or str, or bool, or user-defined object, etc.
+    :input f: a function that takes as input an element of the list and then returns either True or False. It is a condition.
+    :output: the elements in the input list that meet the given condition
+    """
+
+    return lst if len(lst) == 0 else ([lst[0]] + filter(lst[1:], f) if f(lst[0]) else filter(lst[1:], f))
+
+
+def map(lst: List[T], f: Callable[[T], U]) -> List[U]:
+    """ A generic function for mapping elements in the input list.
+
+    :input lst: a list of elements of type T. For example, T can be int, or str, or bool, or user-defined object, etc.
+    :input f: a function that takes as input an element of type T of the list and then maps it to a new value of type U. It is a mapper function.
+    :output: a list of elements of type U. Its length is the same as that of the input list.
+    """
+
     return lst if len(lst) == 0 else [f(lst[0])] + map(lst[1:], f)
 
 
 class Location:
-    def __init__(self, latitude, longitude):
-        self.__latitude = latitude
-        self.__longitude = longitude
+    """ A class that represents a geographical location. """
 
-    def get_latitiude(self):
+    def __init__(self, latitude: float, longitude: float) -> None:
+        self.__latitude: float = latitude  # The latitude of the location
+        self.__longitude: float = longitude  # The longitude of the location
+
+    def get_latitiude(self) -> float:
         return self.__latitude
 
-    def get_longitude(self):
+    def get_longitude(self) -> float:
         return self.__longitude
 
 
-def haversine_distance(l1: Location, l2: Location):
+def haversine_distance(l1: Location, l2: Location) -> float:
+    """ Compute the distance between two locations using coordinates. 
+        This code was taken from https://cloud.google.com/blog/products/maps-platform/how-calculate-distances-map-maps-javascript-api.
+
+    :input l1: a location
+    :input l2: another location
+    :output: the distance between the two locaitons in kilometer
+    """
+
     R = 6371.0710
     # Radius of the Earth in miles
     rlat1 = l1.get_latitiude() * (math.pi / 180)
@@ -88,20 +123,8 @@ def haversine_distance(l1: Location, l2: Location):
             )
         )
     )
+
     return d
-
-
-def addUni(request):
-    University = University(name="MMM", suburbname="Sname", location="33,33")
-    University.save()
-    return HttpResponse("<p>Success<p>")
-
-
-def search():
-    PrintSuburb = Suburb.objects.all()
-    for i in PrintSuburb:
-        print(i.name)
-    return 0
 
 
 #     return photos
@@ -125,18 +148,14 @@ def search():
 #     return photos
 
 
-def get_qualified_suburbs(
-    uni: str,
-    rent_min: int,
-    rent_max: int,
-    crime_rate_max: int,
-    distance_min: int,
-    distance_max: int,
-):
-    """Returns the correct suburbs according to user input."""
+def get_qualified_suburbs(uni_id: int,rent_min: int,rent_max: int,crime_rate_max: int,distance_min: int,distance_max: int) -> List[Suburb]:
+    """ Return the list of suburbs that meet the conditions specified by the user.
+    
+    :input uni_id:
+    """
 
     # Get the university
-    university = University.objects.filter(id=uni)[0]
+    university = University.objects.filter(id=uni_id)[0]
 
     # Get the list of qualified suburbs
     suburbs = Suburb.objects.filter(
@@ -167,7 +186,8 @@ def get_qualified_suburbs(
         payload = {}
         headers = {}
 
-        response = requests.request("GET", URL, headers=headers, data=payload).json()
+        response = requests.request(
+            "GET", URL, headers=headers, data=payload).json()
 
         try:
             photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
@@ -199,7 +219,8 @@ def get_photos(place_id: str):
     payload = {}
     headers = {}
 
-    response = requests.request("GET", URL, headers=headers, data=payload).json()
+    response = requests.request(
+        "GET", URL, headers=headers, data=payload).json()
 
     photos = []
     try:
@@ -239,7 +260,58 @@ def convert_coordinates(e: Suburb) -> Suburb:
     return e
 
 
+def validate_input(uni_id: str, distance_min: str, distance_max: str, crime_rate_max: str, rent_min: str, rent_max: str) -> dict:
+    """ Convert input values into appropriate format and validate input values."""
+
+    # Convert input values into appropriate data type
+    uni_id = int(uni_id)
+    distance_min = int(distance_min)
+    distance_max = int(distance_max)
+    crime_rate_max = int(crime_rate_max)
+    rent_min = int(rent_min)
+    rent_max = int(rent_max)
+
+    # Validate the provided university ID
+    university = University.objects.get(uni_id)
+    if university is None:
+        raise ValueError("The provided university ID is incorrect!")
+
+    # Validate the provided minimum distance
+    if (distance_min < 1 and distance_min != UNDEFINED) or distance_min > 20:
+        raise ValueError("The provided minimum distance is incorrect!")
+
+    # Validate the provided maximum distance
+    if (distance_max < 1 and distance_max != UNDEFINED) or distance_max > 20:
+        raise ValueError("The provided maximum distance is incorrect!")
+
+    # Validate the provided maximum crime rate
+    if (crime_rate_max < 1000 and crime_rate_max != UNDEFINED) or crime_rate_max > 30000:
+        raise ValueError("The provided maximum crime rate is incorrect!")
+
+    # Validate the provided minimum average rent
+    if (rent_min < 100 and rent_min != UNDEFINED) or rent_min > 700:
+        raise ValueError("The provided minimum average rent is incorrect!")
+
+    # Validate the provided maximum average rent
+    if (rent_max < 100 and rent_max != UNDEFINED) or rent_max > 700:
+        raise ValueError("The provided maximum average rent is incorrect!")
+
+    # Define some conversion functions
+    def convert_min(x): return 0 if x < 0 else x
+    def convert_max(x): return INFINITY if x < 0 else x
+
+    return {
+        uni_id: uni_id,
+        distance_min: convert_min(distance_min),
+        distance_max: convert_max(distance_max),
+        crime_rate_max: convert_max(crime_rate_max),
+        rent_min: convert_min(rent_min),
+        rent_max: convert_max(rent_max)
+    }
+
 # ||||||||||||||||||||||||||||||||||| Request handlers |||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
 def direction(request):
     """Request handler for getting information about public transport."""
 
@@ -301,7 +373,8 @@ def places(request):
     )
     payload = {}
     headers = {}
-    response = requests.request("GET", URL, headers=headers, data=payload).json()
+    response = requests.request(
+        "GET", URL, headers=headers, data=payload).json()
     return JsonResponse(response)
 
 
@@ -312,121 +385,74 @@ def index(request):
 
     # This returns the page "index.html"
     return render(
-        request, "best_suburb/index.html", {"universities": University.objects.all()}
+        request, "best_suburb/index.html", {
+            "universities": University.objects.all()}
     )
 
 
 def suburbs(request):
-    """Request handler for the path "/suburbs". This function will
-    be called whenever the client requests the path "/suburbs".
+    """ Request handler for the path "/suburbs". It first processes the request
+        and then sends back a list of suburbs that meet the conditions specified by
+        the user. This function will be called whenever the user makes a request to the path "/suburbs".
+
+    :input request: an object/dictionary that represents an HTTP request. The most important 
+                    property/field it has is a field called "GET", which contains input parameters in a GET request.
+                    request.GET is also an object/dictionary that has six fields: the database ID of the user's university,
+                    the minimum distance from the university (in kilometer), the maximum distance from the university (in kilometer),
+                    the maximum crime rate in a suburb (per 100,000), the minimum average rent in a suburb (in australian dollar),
+                    the maximum average rent in a suburb (also in australian dollar).
+    :output: a list of suburbs that meet the given conditions.
     """
 
-    # If this is a POST request, this means the client has filled out the form on the homepage
-    if request.method == "POST":
-        # Functions and constants used to handle the input values
-        UNDEFINED = "-1"
-        INFINITY = 100000000
-        correct_min = lambda x: 0 if x < 0 else x
-        correct_max = lambda x: INFINITY if x < 0 else x
-
-    # Check if the input values are valid or not
+    # Check if the input values are valid or not and convert the input values into appropriate format
     try:
-        uni = request.GET.get("uni")
-        University.objects.filter(id=uni)[0]
-        if uni == "" or uni is None:
-            raise ValueError
-
-        rent_min = correct_min(int(request.GET.get("rent_min")))
-        rent_max = correct_max(int(request.GET.get("rent_max")))
-        distance_min = correct_min(int(request.GET.get("distance_min")))
-        distance_max = correct_max(int(request.GET.get("distance_max")))
-        crime_rate_max = correct_max(int(request.GET.get("crime_rate_max")))
-    except IndexError or ValueError:
-        # If the input is invalid
-        return render(
-            request,
-            "best_suburb/400.html",
-            {"error_message": "You need to provide a valid uni ID"},
+        parameters = validate_input(
+            request.GET.get("uni"),
+            request.GET.get("distance_min"),
+            request.GET.get("distance_max"),
+            request.GET.get("crime_rate_max"),
+            request.GET.get("rent_min"),
+            request.GET.get("rent_max"),
         )
-    except TypeError:
-        return render(
-            request,
-            "best_suburb/400.html",
-            {"error_message": "You need to provide valid parameters"},
-        )
+    except ValueError or TypeError:  # Incorrect input
+        return HTTPResponse("Sorry, we couldn't find what you're looking for.", status=404)
+    except Exception:  # Something went wrong
+        return HTTPResponse("Sorry, something went wrong.", status=400)
 
+    # Get the list of suburbs that meet given conditions
     qualified_suburbs = get_qualified_suburbs(
-        uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
+        parameters["uni_id"],
+        parameters["rent_min"],
+        parameters["rent_max"],
+        parameters["crime_rate_max"],
+        parameters["distance_min"],
+        parameters["distance_max"]
     )
 
+    # Return the list of suburbs in JSON format
     return JsonResponse(qualified_suburbs)
 
 
 def list(request):
-    """Request handler for the path "/list". This function will
-    be called whenever the client requests the path "/list".
+    """ Request handler for the path "/list". 
+        It sends back a template (the list page) to the user. 
+        This function will be called whenever the user makes a request to the path "/list".
+
+    :input request: an object/dictionary that represents an HTTP request. However, it is not used
+                    in this function.
+    :output: a response that contains the list page.
     """
 
-    # If this is a GET request, this means the client has filled out the form on the homepage
-    # Functions and constants used to handle the input values
-    INFINITY = 100000000
-    correct_min = lambda x: 0 if x < 0 else x
-    correct_max = lambda x: INFINITY if x < 0 else x
-
-    # Check if the input values are valid or not
-    try:
-        uni = request.GET.get("uni")
-        University.objects.filter(id=uni)[0]
-        if uni == "" or uni is None:
-            raise ValueError
-
-        rent_min = correct_min(int(request.GET.get("rent_min")))
-        rent_max = correct_max(int(request.GET.get("rent_max")))
-        distance_min = correct_min(int(request.GET.get("distance_min")))
-        distance_max = correct_max(int(request.GET.get("distance_max")))
-        crime_rate_max = correct_max(int(request.GET.get("crime_rate_max")))
-    except IndexError or ValueError:
-        # If the input is invalid
-        return render(
-            request,
-            "best_suburb/400.html",
-            {"error_message": "You need to provide a valid uni ID"},
-        )
-    except TypeError:
-        return render(
-            request,
-            "best_suburb/400.html",
-            {"error_message": "You need to provide valid parameters"},
-        )
-
-    # Save uni into the current session
-    request.session["uni"] = uni
-
-    qualified_suburbs = get_qualified_suburbs(
-        uni, rent_min, rent_max, crime_rate_max, distance_min, distance_max
-    )
-    # print("qualixxxxx")
-    print(qualified_suburbs)
-    # print(qualified_suburbs[1])
-
-    return render(
-        request,
-        "best_suburb/list.html",
-        {
-            "suburbs": qualified_suburbs,
-            "current_uni": request.session["uni"],
-            "universities": University.objects.all(),
-        },
-    )
+    return render(request, "best_suburb/list.html")
 
 
 def info(request):
-    ##1. get the user click suburb
-    ##2. serach the suburb name from database
-    ##3. display the information of suburb
+    # 1. get the user click suburb
+    # 2. serach the suburb name from database
+    # 3. display the information of suburb
 
     # context = {}
-    ##now is string,after have database,it need to change it to int
+    # now is string,after have database,it need to change it to int
 
     # context["sub_id"] = primary_key  # get form sql database
     # context["sub_name"] = primary_key  # get form sql database
@@ -477,7 +503,8 @@ def get_crimerate_char(suber_name):
                                             offset: 1,
                                             color: 'rgb(25, 183, 207)'
                                         }])"""
-    x_data = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]
+    x_data = ["2013", "2014", "2015", "2016",
+              "2017", "2018", "2019", "2020", "2021"]
     y_data = [
         suber_name.get("crime_rate_in_2013"),
         suber_name.get("crime_rate_in_2014"),
@@ -506,7 +533,8 @@ def get_crimerate_char(suber_name):
                 pos_left="center",
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
+            legend_opts=opts.LegendOpts(
+                is_show=True, pos_left="70%", pos_bottom="80%"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
                 name="      Crime rate",
@@ -523,7 +551,8 @@ def get_crimerate_char(suber_name):
 
 
 def get_average_char(suber_name):
-    x_data = ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]
+    x_data = ["2013", "2014", "2015", "2016",
+              "2017", "2018", "2019", "2020", "2021"]
     y_data = [
         suber_name.get("averagerent_in_2013"),
         suber_name.get("averagerent_in_2014"),
@@ -551,7 +580,8 @@ def get_average_char(suber_name):
                 pos_left="center",
             ),
             tooltip_opts=opts.TooltipOpts(trigger="axis"),
-            legend_opts=opts.LegendOpts(is_show=True, pos_left="70%", pos_bottom="80%"),
+            legend_opts=opts.LegendOpts(
+                is_show=True, pos_left="70%", pos_bottom="80%"),
             yaxis_opts=opts.AxisOpts(
                 type_="value",
                 name="      Average rent",
@@ -612,6 +642,7 @@ def recommended_system(qualified_suburbs):
     max_averagerent = (
         Suburb.objects.all().aggregate(Max("average_rent")).get("average_rent__max")
     )
+
     min_averagerent = (
         Suburb.objects.all().aggregate(Min("average_rent")).get("average_rent__min")
     )
