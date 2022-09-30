@@ -3,14 +3,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- This html page is our application main page
+     allow user select their university name and other requirement-->
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- this page title -->
     <title>Best Suburb</title>
-    <!-- font-awesome -->
+
+
+    <!-- the references of Bootstrap and CSS-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
@@ -19,14 +25,23 @@
     <script src="../../static//best_suburb/javascript/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    
-    <!-- <link rel="stylesheet" href="./css/style.css"> -->
-    <!-- Django's specific syntax for linking files -->
     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="../../static/best_suburb/javascript/index.js"></script>
 
+    <!-- the javascript of tooltip-->
+    <script>
+        document.addEventListener("DOMContentLoaded", () =>{
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+           });
+        });
+    </script>
 </head>
 
 <body>
+    <!-- the top left logo(best suburb) in main page-->
     <div class="logo">
         <img src="" alt="">
         <div class="logo-title">
@@ -36,12 +51,18 @@
             </a>
         </div>
     </div>
+
+    <!-- the information in main page(including the filter and other information) -->
     <div class="content-wrapper">
+
+        <!-- create the line text "Welcome to Best Suburb!" -->
         <h1 class="midnight-express">
             Welcome to Best Suburb!
         </h1>
         <form action="{% url 'list' %}" method="get" id="the_form">
             {% csrf_token %}
+
+            <!-- get all university name from database and let user to select their own university -->
             <div class="wrapper center">
                 <div class="form-class-home">
                     <div class="form-item-home">
@@ -63,12 +84,15 @@
                     </div>
                 </div>          
             </div>
-            
+
+            <!-- user can click button search to search suburb according their input -->
             <div class="wrapper center">
                 <button class="btn btn-primary" id="search" type="submit" style=" height: 45px; background-color: #0d6efd;
                 border-color: #0d6efd;">Search</button>
 
             </div>
+
+            <!-- in the filter system selection, user can select different requirement-->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -82,18 +106,14 @@
                             {% csrf_token %}
 
                             <div class="form-group">
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5b9058f6b173629b4a80c16cfed1c736440e3fef
                                 <label for="RentPrice">Average Price Per Week</label>
                                 <div style="display: flex; padding: 10px;">
                                     <div style="margin-right: 5px;">
-                                        <!-- <label>min:
-                                                <input list="min1" name="rent_min" /></label>
-                                            <datalist id="min1">
-                                                <option value="10">
-                                                <option value="20">
-                                                <option value="30">
-                                                <option value="40">
-                                                <option value="50">
-                                            </datalist> -->
+
                                         <label for="rent_min">min</label>
                                         <select id="rent_min" name="rent_min">
                                             <option value="-1" selected>Any</option>
@@ -113,15 +133,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <!-- <label>max:
-                                                <input list="max" name="rent_max" /></label>
-                                            <datalist id="max" style="width: 100px;">
-                                                <option value="10">
-                                                <option value="20">
-                                                <option value="30">
-                                                <option value="40">
-                                                <option value="50">
-                                            </datalist> -->
+
                                         <label for="rent_max">max</label>
                                         <select id="rent_max" name="rent_max">
                                             <option value="-1" selected>Any</option>
@@ -150,15 +162,7 @@
                                 </svg>
                                 <div style="display: flex; padding: 10px;">
                                     <div style="margin-right: 5px;">
-                                        <!-- <label>min:
-                                                <input list="min2" name="crime_rate_min" /></label>
-                                            <datalist id="min2">
-                                                <option value="10">
-                                                <option value="20">
-                                                <option value="30">
-                                                <option value="40">
-                                                <option value="50">
-                                            </datalist> -->
+
                                         <label for="crime_rate_max">Max</label>
                                         <select id="crime_rate_max" name="crime_rate_max">
                                             <option value="-1" selected>Any</option>
@@ -195,15 +199,7 @@
                                 <label for="university">Distance to University</label>
                                 <div style="display: flex; padding: 10px;">
                                     <div style="margin-right: 5px;">
-                                        <!-- <label>min:
-                                                <input list="min3" name="distance_min" /></label>
-                                            <datalist id="min3">
-                                                <option value="10">
-                                                <option value="20">
-                                                <option value="30">
-                                                <option value="40">
-                                                <option value="50">
-                                            </datalist> -->
+
                                         <label for="distance_min">Min</label>
                                         <select id="distance_min" name="distance_min">
                                             <option value="-1" selected>Any</option>
@@ -219,14 +215,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <!-- <label>max:<input list="max3" name="distance_max" /></label>
-                                            <datalist id="max3" style="width: 100px;">
-                                                <option value="10">
-                                                <option value="20">
-                                                <option value="30">
-                                                <option value="40">
-                                                <option value="50">
-                                            </datalist> -->
+
                                         <label for="distance_max">Max</label>
                                         <select id="distance_max" name="distance_max">
                                             <option value="-1" selected>Any</option>
@@ -253,6 +242,8 @@
                 </div>
             </div>
         </form>
+
+        <!-- other main page information-->
         <h2 class="midnight-express">
             Find your suitable suburb
         </h2>
@@ -264,23 +255,6 @@
         </p>
     </div>
 
-    
-
-    
-
-    
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-    <script>
-
-    </script>
-
-    <!-- Modal -->
-
-    <!-- <script src="./js/index.js"></script> -->
-    <!-- Django's specific syntax for linking files -->
 </body>
 
 </html>
