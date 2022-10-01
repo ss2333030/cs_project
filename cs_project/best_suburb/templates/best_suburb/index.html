@@ -22,7 +22,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
-    <script src="{% static 'best_suburb/javascript/index.js' %}"></script>
+    <script src="../../static//best_suburb/javascript/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
@@ -59,10 +59,7 @@
         <h1 class="midnight-express">
             Welcome to Best Suburb!
         </h1>
-
-
-        <!-- get the form of user input (get user university name,and filter selection) -->
-        <form action="{% url 'list' %}" method="get">
+        <form action="{% url 'list' %}" method="get" id="the_form">
             {% csrf_token %}
 
             <!-- get all university name from database and let user to select their own university -->
@@ -70,7 +67,7 @@
                 <div class="form-class-home">
                     <div class="form-item-home">
                         <div class="university-wrapper-home">
-                            <select class="form-select university" id="uni" name="uni">
+                            <select class="form-select university" id="uni_id" name="uni">
                                 {% for university in universities %}
                                 <option value="{{ university.id }}">{{ university.name }}</option>
                                 {% endfor %}
@@ -110,7 +107,10 @@
 
                             <!-- Average Price Per Week-->
                             <div class="form-group">
+<<<<<<< HEAD
+=======
 
+>>>>>>> 5b9058f6b173629b4a80c16cfed1c736440e3fef
                                 <label for="RentPrice">Average Price Per Week</label>
                                 <div style="display: flex; padding: 10px;">
                                     <div style="margin-right: 5px;">
