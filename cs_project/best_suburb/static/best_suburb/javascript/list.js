@@ -29,27 +29,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    async function sendRequest() {
+        const URL = `/suburbs?uni_id=${localStorage.getItem("uni_id")}&rent_min=${localStorage.getItem("rent_min")}&rent_max=${localStorage.getItem("rent_max")}&distance_min=${localStorage.getItem("distance_min")}&distance_max=${localStorage.getItem("distance_max")}&crime_rate_max=${localStorage.getItem("crime_rate_max")}`;
+        let response = await fetch(URL);
+
+        if (response.status == 404) {
+            const errorMessage = document.createElement("h5");
+            errorMessage.innerHTML = "Sorry, we couldn't find what you're looking for.";
+            document.querySelector("#suburbs").appendChild(errorMessage);
+        } else if (response.status == 400) {
+            const errorMessage = document.createElement("h5");
+            errorMessage.innerHTML = "Sorry, something went wrong.";
+            document.querySelector("#suburbs").appendChild(errorMessage);
+        } else {
+            suburbList = await response.json();
+            setSuburbs();
+        }
+    }
+
+    function saveParameters() {
+        localStorage.setItem("uni_id", document.querySelector("#uni_id").value);
+        localStorage.setItem("rent_min", document.querySelector("#rent_min").value);
+        localStorage.setItem("rent_max", document.querySelector("#rent_max").value);
+        localStorage.setItem("crime_rate_max", document.querySelector("#crime_rate_max").value);
+        localStorage.setItem("distance_min", document.querySelector("#distance_min").value);
+        localStorage.setItem("distance_max", document.querySelector("#distance_max").value);
+    }
+
     function removeSuburbs() {
         let suburbs = document.querySelectorAll(".suburb");
         suburbs.forEach(suburb => suburb.remove());
     }
 
-
-    const URL = `/suburbs?uni_id=${localStorage.getItem("uni_id")}&rent_min=${localStorage.getItem("rent_min")}&rent_max=${localStorage.getItem("rent_max")}&distance_min=${localStorage.getItem("distance_min")}&distance_max=${localStorage.getItem("distance_max")}&crime_rate_max=${localStorage.getItem("crime_rate_max")}`;
-    let response = await fetch(URL);
-
-    if (response.status == 404) {
-        const errorMessage = document.createElement("h5");
-        errorMessage.innerHTML = "Sorry, we couldn't find what you're looking for.";
-        document.querySelector("#suburbs").appendChild(errorMessage);
-    } else if (response.status == 400) {
-        const errorMessage = document.createElement("h5");
-        errorMessage.innerHTML = "Sorry, something went wrong.";
-        document.querySelector("#suburbs").appendChild(errorMessage);
-    } else {
-        suburbList = await response.json();
-        setSuburbs();
-    }
 
     document.querySelector("#btnradio1").onclick = () => {
         removeSuburbs();
@@ -99,6 +110,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         setSuburbs();
     }
 
+    document.querySelector("#the_form").onclick = () => {
+        saveParameters();
+        sendRequest();
+    };
 
     // input.addEventListener('input', async function () {
     //     let response = await fetch('/search?q=' + input.value);
