@@ -11,7 +11,7 @@ __author__ = "Feng Ji & Ngok Yu"
 
 from ast import Sub
 from logging.handlers import QueueListener
-from cairo import Status
+
 from django.http import HttpResponse
 import imp
 from json.encoder import INFINITY

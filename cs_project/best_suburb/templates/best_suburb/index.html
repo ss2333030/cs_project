@@ -4,7 +4,9 @@
 <html lang="en">
 
 <!-- This html page is our application main page
-     allow user select their university name and other requirement-->
+     allow user select their university name and other requirement
+     Users can click the search button to recommend suitable suburbs to users
+     -->
 
 <head>
     <meta charset="UTF-8">
@@ -105,12 +107,9 @@
                         <div class="modal-body">
                             {% csrf_token %}
 
-                            <!-- Average Price Per Week-->
+                            <!-- get the Average Price Per Week from user-->
                             <div class="form-group">
-<<<<<<< HEAD
-=======
 
->>>>>>> 5b9058f6b173629b4a80c16cfed1c736440e3fef
                                 <label for="RentPrice">Average Price Per Week</label>
                                 <div style="display: flex; padding: 10px;">
                                     <div style="margin-right: 5px;">
@@ -156,7 +155,7 @@
                                 </div>
                             </div>
 
-                            <!-- Crime Rate-->
+                            <!-- get the Crime Rate from user -->
                             <div class="form-group">
                                 <label for="CrimeRate">Crime Rate</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="right" title="Number of criminal incident per 100,000 population">
@@ -199,7 +198,7 @@
                                 </div>
                             </div>
 
-                            <!-- Distance to University-->
+                            <!-- get the Distance to University from user -->
                             <div class="form-group">
                                 <label for="university">Distance to University</label>
                                 <div style="display: flex; padding: 10px;">

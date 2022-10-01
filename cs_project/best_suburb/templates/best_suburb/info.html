@@ -4,33 +4,48 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- This html page is display about the all information of suburb (information page)
+       display including    1. the suburb name
+                            2. the suburb postcode & position
+                            3. the suburb images
+                            4. the suburb crime rate
+                            5. the suburb average rent
+                            6. the suburb recommended index
+                            7. the visualization of crime rate and average rent
+                            ...
+            -->
+
+ <!-- html head section -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Suburb</title>
+
     <!-- font-awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
         crossorigin="anonymous"></script>
-    
-        <!-- <link rel="stylesheet" href="./css/style.css"> -->
     <link rel="stylesheet" href="{% static 'best_suburb/css/style.css' %}">
     
     <!-- Django's specific syntax for linking files -->
     <script src="{% static 'best_suburb/javascript/jquery.range.js' %}"></script>
     <script src="{% static 'best_suburb/javascript/info.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </head>
 
+
+ <!-- html body section -->
 <body>
+
+     <!-- the top left logo(best suburb) in main page-->
     <div class="top-wrapper">
         <div class="logo">
             <img src="" alt="">
@@ -41,36 +56,18 @@
                 </a>
             </div>
         </div>
-        <!--        <div class="prefix-search-combination">-->
-        <!--            <div class="navbar bg-light" >-->
-        <!--                <div class="navbar bg-light">-->
-        <!--                    <i class="fa fa-search" aria-hidden="true"></i>-->
-        <!--                </div>-->
-        <!--                <nav class="navbar bg-light">-->
-        <!--                    <div class="container-fluid">-->
-        <!--                        <form class="row g-2">-->
-        <!--                            <div class="col-auto">-->
-        <!--                                <input class="form-control" type="text" placeholder="Search other university" aria-label="default input example">-->
-        <!--                            </div>-->
-        <!--                            <div class="col-auto">-->
-        <!--                                <button class="btn btn-outline-primary" type="submit">Search</button>-->
-        <!--                            </div>-->
-        <!--                    -->
-        <!--                        </form>-->
-        <!--                    -->
-        <!--                    </div>-->
-        <!--                </nav>   -->
-        <!--            </div>-->
-        <!--        </div>-->
+
     </div>
 
 <div class="content-wrapper2">
     <div class="suburb-image">
         <div class="row">
+
+            <!-- display this suburb photos using django language -->
             <div class="col-auto">
-                <!-- <img style="border-radius: 100px" src="{% static 'best_suburb/images/suburb.png' %}" alt="Inforsuburb"
-                    width="700" height="400"> -->
                 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+
+                     <!-- display this suburb photos using django language -->
                     <div class="carousel-indicators">
                         {% for photo in suburb.photos %}
                         {% if forloop.first%}
@@ -82,6 +79,8 @@
                         {% endif %}
                         {% endfor %}
                     </div>
+
+                    <!-- display this suburb photos using django language -->
                     <div class="carousel-inner">
                         {% for photo in suburb.photos %}
                         {% if forloop.first%}
@@ -95,11 +94,14 @@
                         {% endif %}
                         {% endfor %}
                     </div>
+
+                    <!-- user can click the button to previous photos  -->
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
+                    <!-- user can click the button to next photos -->
                     <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
@@ -107,35 +109,44 @@
                     </button>
                 </div>
             </div>
-            
+
+            <!-- display this suburb name using django language -->
             <div class="col-auto">
                 <div>
                     <h3>{{ suburb.name }}</h3>
                 </div>
 
+                <!-- suburb facility section -->
                 <div class="Facility">
                     <h3>Facility</h3>
                 </div>
             </div>
+
+
+
+            <!-- display this suburb facility information using django language -->
             <div class="col-auto">
                 <div class="row" style="padding-top: 10px;">
                     <div class="col-auto">
                         <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"height="20">
                     </div>
+
+                    <!-- display this suburb name and suburb postcode using django language -->
                     <div class="col-auto">
                         <div>{{suburb.name}}, VIC {{suburb.postcode}}</div>
                     </div>
+
+                    <!-- display this suburb latitude, longitude using django language -->
                     <div class="col-auto">
                         <div>{{suburb.latitude}}&#176;{{suburb.hemisphere_latitude}},{{suburb.longitude}}&#176;{{suburb.hemisphere_longitude}}</div>
                     </div>
                 </div>
+
+
+
                 <div class="suburb-info">
-                    <!--<ul class="list-inline">
-                    <li class="list-inline-item">Crime rate: {{suburb.crime_rate}}</li>
-            
-                    <li class="list-inline-item">Distance from school: {{suburb.average_rent}}m</li>
-                  </ul>-->
-            
+
+                    <!-- display this suburb crime rate using django language -->
                     <div class="row">
                         <p>Crime rate: {{suburb.crime_rate}}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="right" title="Number of criminal incident per 100,000 population">
@@ -143,11 +154,17 @@
                                 <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
                             </svg>
                         </p>
+
+                        <!-- display this suburb distance from the university that user selection in main page -->
                         <p>Distance from {{uni_name}}: {{suburb.distance}} km</p>
                     </div>
+
+
                     <div class="row">
-            
-                        <p>Average Rent: ${{suburb.average_rent}}/per week</p>            
+                        <!-- display this suburb average rent using django language -->
+                        <p>Average Rent: ${{suburb.average_rent}}/per week</p>
+
+                        <!-- display this suburb public transport using django language -->
                         {% comment %} <div class="col-auto">
                             <p>Public transport access to univerisity: None</p>
                         </div>  {% endcomment %}
@@ -157,8 +174,11 @@
         </div>
     </div>
 
+    <!-- display this suburb information using data visualization -->
     <h2 style="padding-left:100px;padding-top:50px">Suburb Data</h2>
     <div class="row">
+
+        <!-- display crime rate chart -->
         <div class="col-auto">
             <div class="chart" >
                 <p>
@@ -169,6 +189,7 @@
             </div>
         </div>
 
+        <!-- display average rent chart -->
          <div class="col-auto">
             <div class="average_chart">
                 <p>{{average_char|safe}}</p>
@@ -176,7 +197,7 @@
             </div>
          </div>
         
-
+    <!-- display the recommended index chart -->
     </div>
     <div class="col-auto">
             <div class="average_chart">
@@ -190,7 +211,7 @@
     
 
 
-
+    <!-- next is public transport system section  -->
     {% comment %} <div class="container" style=" left:80px; top:850px;">
         <table class="_table">
             <thead>
@@ -222,20 +243,7 @@
                     </tr>
                 </form>
 
-                <!-- <td>
-                    <div>
-                        <input type="text" class="form_control" placeholder="To:" id="place">
-                        <ul id="results">
-                        </ul>
-                    </div> -->
 
-                <!-- </td>
-                  <td>
-                    <input type="text" class="form_control" placeholder="+880177x-xxxxxx">
-                  </td>
-                  <td>
-                    <textarea class="form_control" placeholder="Enter Your Address..."></textarea>
-                  </td> -->
                 <td>
                     <div class="action_container">
                         <button class="danger" onclick="remove_tr(this)">
