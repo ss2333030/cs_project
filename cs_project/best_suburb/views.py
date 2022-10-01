@@ -451,25 +451,15 @@ def list(request):
 
 
 def info(request):
-    # 1. get the user click suburb
-    # 2. serach the suburb name from database
-    # 3. display the information of suburb
 
-    # context = {}
-    # now is string,after have database,it need to change it to int
+    """ Request handler for the path "/info".
+            It sends back a template (the info page) to the user.
+            This function will be called whenever the user makes a request to the path "/info".
 
-    # context["sub_id"] = primary_key  # get form sql database
-    # context["sub_name"] = primary_key  # get form sql database
-    # context["sub_postcode"] = "3100"  # get form sql database
-    # context["sub_city"] = "Victoria"  # get form sql database
-    # context["sub_aver_rent"] = "700"  # get form sql database
-    # context["sub_crime_rate"] = "10.2"  # get form sql database
-    # context["distance"] = "5"  # get form googlemap
-    # context["have_transport"] = "No"  # get form sql database
-    # school_name = "Monash"
-    # suburbs_name = "Clayton"
-
-    # context["char"] = myechar.render_embed()
+        :input request: an object/dictionary that represents an HTTP request. However, it is not used
+                        in this function.
+        :output: a response that contains the info page.
+        """
 
     suburb = Suburb.objects.filter(id=request.GET.get("suburb_id")).values()[0]
 
@@ -500,6 +490,15 @@ def info(request):
 
 
 def get_crimerate_char(suber_name):
+    """ This function is create a line chart using pyechart.
+        This chart is about this suburb crime rate in ten year
+
+        :input request:  the suburb name
+        :output: the line chart about this suburb crime rate in ten year
+        """
+
+
+
     item_color_js_2 = """new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
                                             offset: 0,
                                             color: 'rgb(129, 227, 238)'
@@ -555,6 +554,13 @@ def get_crimerate_char(suber_name):
 
 
 def get_average_char(suber_name):
+    """ This function is create a line chart using pyechart.
+            This chart is about this suburb average rent  in ten year
+
+            :input request:  the suburb name
+            :output: the line chart about this suburb average rent in ten year
+            """
+
     x_data = ["2013", "2014", "2015", "2016",
               "2017", "2018", "2019", "2020", "2021"]
     y_data = [
@@ -602,6 +608,13 @@ def get_average_char(suber_name):
 
 
 def recom_char():
+    """ This function is create a water chart using pyechart.
+               This chart is about this suburb  Recommendation Index  in ten year
+
+               :input request:  the suburb name
+               :output: the line chart about this suburb Recommendation Index using our  Recommendation Index system
+               """
+
     liquid = (
         Liquid(init_opts=opts.InitOpts(width="300px", height="300px"))
         .add("", [0.52, 0.44])
