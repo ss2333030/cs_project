@@ -148,11 +148,12 @@ def add_photo(s: dict) -> dict:
     # Send a GET request to Google Maps Platform - Places API - Place Search - Find Place
     response = requests.request("GET", URL).json()
 
-    if len(response["candidates"]) < 1: # If the API didn't find the given suburb at all
+    if len(response["candidates"]) < 1:  # If the API didn't find the given suburb at all
         s["place_id"] = ""  # This represents that this suburb doesn't have a place id
         # Use the default photo instead
         s["photo"] = "/static/best_suburb/images/suburb.png"
-    elif len(response["candidates"][0]["photos"]) < 1:  # If the API didn't return any photos
+    # If the API didn't return any photos
+    elif len(response["candidates"][0]["photos"]) < 1:
         s["place_id"] = response["candidates"][0]["place_id"]
         # Use the default photo instead
         s["photo"] = "/static/best_suburb/images/suburb.png"
@@ -202,9 +203,13 @@ def get_qualified_suburbs(uni_id: int, rent_min: int, rent_max: int, crime_rate_
     return map(results, add_photo)
 
 
-def get_distance(suburb: Suburb, uni: str):
-    # Get the university
-    university = University.objects.filter(id=uni).values()[0]
+def get_distance(suburb: dict, university: dict) -> float:
+    """ Calculate the distance between the given suburb and university. 
+
+    :input suburb: the target suburb
+    :input university: the user's university
+    :output: the distance between the suburb and the university
+    """
 
     l1 = Location(suburb["latitude"], suburb["longitude"])
     l2 = Location(university["latitude"], university["longitude"])
@@ -212,13 +217,15 @@ def get_distance(suburb: Suburb, uni: str):
 
 
 def get_photos(place_id: str):
-    """Get a collection of photos for a given place."""
-    URL = f"https://maps.googleapis.com/maps/api/place/details/json?fields=formatted_address%2Cname%2Cphotos&place_id={place_id}&key={API_KEY}"
-    payload = {}
-    headers = {}
+    """ Get a collection of photos for a given suburb using its place_id.
 
-    response = requests.request(
-        "GET", URL, headers=headers, data=payload).json()
+    :input place_id: the place_id of the suburb
+    :output: a list of photos of the suburb    
+    """
+
+    # Build the URL and send an HTTP request to Google Maps Platform - Places API - Place Details
+    URL = f"https://maps.googleapis.com/maps/api/place/details/json?fields=photos&place_id={place_id}&key={API_KEY}"
+    response = requests.request("GET", URL).json()
 
     photos = []
     try:
@@ -451,7 +458,6 @@ def list(request):
 
 
 def info(request):
-
     """ Request handler for the path "/info".
             It sends back a template (the info page) to the user.
             This function will be called whenever the user makes a request to the path "/info".
@@ -461,27 +467,30 @@ def info(request):
         :output: a response that contains the info page.
         """
 
-    suburb = Suburb.objects.filter(id=request.GET.get("suburb_id")).values()[0]
+    # Find the requested suburb using its id
+    suburb = Suburb.objects.filter(
+        id=int(request.GET.get("suburb_id"))).values()[0]
+
+    # Find the user's university using its id
+    university = University.objects.filter(
+        id=int(request.GET.get("uni_id"))).values()[0]
+
+    # Add additional attributes to the suburb
+    suburb["photos"] = get_photos(request.GET.get("place_id"))
+    suburb["distance"] = get_distance(suburb, university)
+    suburb = convert_coordinates(suburb)
 
     # get the char
     myechar = get_crimerate_char(suburb)
     recome = recom_char()
-
     average_char = get_average_char(suburb)
-    # Add additional attributes to the suburb
-    suburb["photos"] = get_photos(request.GET.get("place_id"))
-    suburb["distance"] = get_distance(suburb, request.session["uni"])
-
-    uni = request.session["uni"]
-    university = University.objects.filter(id=uni).values()[0]
-    uni_name = university.get("name")
 
     return render(
         request,
         "best_suburb/info.html",
         {
-            "suburb": convert_coordinates(suburb),
-            "uni_name": uni_name,
+            "suburb": suburb,
+            "uni_name": university["name"],
             "crime_char": myechar.render_embed(),
             "recom_char": recome,
             "average_char": average_char.render_embed(),
@@ -496,8 +505,6 @@ def get_crimerate_char(suber_name):
         :input request:  the suburb name
         :output: the line chart about this suburb crime rate in ten year
         """
-
-
 
     item_color_js_2 = """new echarts.graphic.RadialGradient(0.4, 0.3, 1, [{
                                             offset: 0,

@@ -364,14 +364,14 @@
 
             <div class="sort-item">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="btnradio1" >Rent price</label>
+                    <input type="radio" class="btn-check" name="btnradio" id="sort_by_rent_price" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="sort_by_rent_price" >Rent price</label>
 
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio2">Distance</label>
+                    <input type="radio" class="btn-check" name="btnradio" id="sort_by_distance" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="sort_by_distance">Distance</label>
 
-                    <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="btnradio3">Crime Rate</label>
+                    <input type="radio" class="btn-check" name="btnradio" id="sort_by_crime_rate" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="sort_by_crime_rate">Crime Rate</label>
                 </div>
             </div>
         </div>
@@ -379,14 +379,13 @@
         <div class="list" id="suburbs">
             <a id="suburb_template" hidden style="text-decoration:none">
                 <div class="item">
-                    <img id="image">
+                    <img id="photo">
                     <div style="text-decoration:none!important;">
                         <p id="name" class="midnight-express"></p>
                         <p class="grey" id="state">
                             <i class="fa fa-map-marker midnight-express" aria-hidden="true"></i>
-                            {{ suburb.state }}&nbsp;
                             <span id="postcode" class="distance">
-                                VIC {{ suburb.postcode }}
+                                VIC
                             </span>
                         </p>
                         <p id="crime_rate" class="text-right">

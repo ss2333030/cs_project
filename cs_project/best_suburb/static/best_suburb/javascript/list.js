@@ -1,52 +1,88 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const uniId = document.querySelector("#uni_id").value = localStorage.getItem("uni_id");
-    const rentMin = document.querySelector("#rent_min").value = localStorage.getItem("rent_min");
-    const rentMax = document.querySelector("#rent_max").value = localStorage.getItem("rent_max");
-    const crimeRateMax = document.querySelector("#crime_rate_max").value = localStorage.getItem("crime_rate_max");
-    const distanceMin = document.querySelector("#distance_min").value = localStorage.getItem("distance_min");
-    const distanceMax = document.querySelector("#distance_max").value = localStorage.getItem("distance_max");
+    function initialise() {
+        document.querySelector("#uni_id").value = localStorage.getItem("uni_id");
+        document.querySelector("#rent_min").value = localStorage.getItem("rent_min");
+        document.querySelector("#rent_max").value = localStorage.getItem("rent_max");
+        document.querySelector("#crime_rate_max").value = localStorage.getItem("crime_rate_max");
+        document.querySelector("#distance_min").value = localStorage.getItem("distance_min");
+        document.querySelector("#distance_max").value = localStorage.getItem("distance_max");
+    }
 
-    let suburbList;
+    /**
+     * Remove all suburbs on list page
+     */
+    function removeSuburbs() {
+        let suburbs = document.querySelectorAll(".suburb");
+        suburbs.forEach(suburb => suburb.remove());
+    }
 
-    function setSuburbs() {
+    /**
+     * Display the suburbs in the variable suburbList.
+     */
+    function displaySuburbs() {
+        // Clean up the list page
+        removeSuburbs();
+
         let suburbs = document.querySelector("#suburbs");
 
         for (let i = 0; i < suburbList.length; i++) {
             let suburb = document.querySelector("#suburb_template").cloneNode(true);
+
+            // Set properties
             suburb.removeAttribute("id");
             suburb.classList.add("suburb");
             suburb.hidden = false;
-            suburb.href = `/info?suburb_id=${suburbList[i].id}&place_id${suburbList[i].place_id}`;
-            suburb.querySelector("#image").src = suburbList[i].photo;
-            suburb.querySelector("#image").alt = suburbList[i].name;
+            suburb.href = `/info?suburb_id=${suburbList[i].id}&place_id=${suburbList[i].place_id}&uni_id=${localStorage.getItem("uni_id")}`;
+
+            suburb.querySelector("#photo").src = suburbList[i].photo;
+            suburb.querySelector("#photo").alt = suburbList[i].name;
             suburb.querySelector("#name").innerHTML = suburbList[i].name;
-            suburb.querySelector("#state").innerHTML = suburbList[i].state;
-            // suburb.querySelector("#postcode").innerHTML = response[i].postcode;
+            suburb.querySelector("#state").insertBefore(document.createTextNode("VIC &nbsp;"), suburb.querySelector("#postcode"))
+            suburb.querySelector("#postcode").innerHTML = suburbList[i].postcode;
             suburb.querySelector("#crime_rate").innerHTML = `Crime Rate:&nbsp;${suburbList[i].crime_rate}`;
             suburb.querySelector("#average_rent").innerHTML = `Average Rent: $${suburbList[i].average_rent}/per week`;
 
+            // Add this suburb to the list suburbs on list page
             suburbs.append(suburb);
         }
     }
 
-    async function sendRequest() {
+
+    /**
+     * Get a list of suburbs from the server based on user input.
+     */
+    async function getSuburbs() {
+        // Build the URL and then send a request to the server
         const URL = `/suburbs?uni_id=${localStorage.getItem("uni_id")}&rent_min=${localStorage.getItem("rent_min")}&rent_max=${localStorage.getItem("rent_max")}&distance_min=${localStorage.getItem("distance_min")}&distance_max=${localStorage.getItem("distance_max")}&crime_rate_max=${localStorage.getItem("crime_rate_max")}`;
         let response = await fetch(URL);
 
-        if (response.status == 404) {
+        if (response.status == 404) {  // If no suburbs were returned 
+            // Remove the suburbs that are currently on list page
+            removeSuburbs();
+
+            // Build the error message
             const errorMessage = document.createElement("h5");
             errorMessage.innerHTML = "Sorry, we couldn't find what you're looking for.";
             document.querySelector("#suburbs").appendChild(errorMessage);
-        } else if (response.status == 400) {
+        } else if (response.status == 400) {   // If something went wrong
+            // Remove all suburbs currently on list page
+            removeSuburbs();
+
+            // Build the error message
             const errorMessage = document.createElement("h5");
             errorMessage.innerHTML = "Sorry, something went wrong.";
             document.querySelector("#suburbs").appendChild(errorMessage);
-        } else {
+        } else {  // Suburbs were retrieved successfully
+
+            // Save the suburbs in a variable
             suburbList = await response.json();
-            setSuburbs();
+            displaySuburbs();
         }
     }
 
+    /**
+     * Save user input in the browser for later use.
+     */
     function saveParameters() {
         localStorage.setItem("uni_id", document.querySelector("#uni_id").value);
         localStorage.setItem("rent_min", document.querySelector("#rent_min").value);
@@ -56,14 +92,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         localStorage.setItem("distance_max", document.querySelector("#distance_max").value);
     }
 
-    function removeSuburbs() {
-        let suburbs = document.querySelectorAll(".suburb");
-        suburbs.forEach(suburb => suburb.remove());
-    }
 
 
-    document.querySelector("#btnradio1").onclick = () => {
+    let suburbList;   // Variable used to store the list of suburbs to be displayed on list page
+    initialise();
+    getSuburbs();
+
+    document.querySelector("#the_form").addEventListener("submit", () => {
+        saveParameters();
+        initialise();
+        getSuburbs();
+        return false;
+    });
+
+
+
+    document.querySelector("#sort_by_rent_price").addEventListener("click", () => {
+        // Remove the suburbs that are currently on list page
         removeSuburbs();
+
+        // Sort suburbs in suburbList by average rent
         suburbList.sort((a, b) => {
             if (a.average_rent < b.average_rent) {
                 return -1;
@@ -75,11 +123,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return 0;
         });
 
-        setSuburbs();
-    }
+        // Display the suburbs in suburbList on list page
+        displaySuburbs();
+    });
 
-    document.querySelector("#btnradio2").onclick = () => {
+    document.querySelector("#sort_by_distance").addEventListener("click", () => {
+        // Remove the suburbs that are currently on list page
         removeSuburbs();
+
+        // Sort suburbs in suburbList by distance
         suburbList.sort((a, b) => {
             if (a.distance < b.distance) {
                 return -1;
@@ -91,11 +143,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return 0;
         });
 
-        setSuburbs();
-    }
+        // Display the suburbs in suburbList on list page
+        displaySuburbs();
+    });
 
-    document.querySelector("#btnradio3").onclick = () => {
+    document.querySelector("#sort_by_crime_rate").addEventListener("click", () => {
+        // Remove the suburbs that are currently on list page
         removeSuburbs();
+
+        // Sort suburbs in suburbList by crime rate
         suburbList.sort((a, b) => {
             if (a.crime_rate < b.crime_rate) {
                 return -1;
@@ -107,13 +163,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             return 0;
         });
 
-        setSuburbs();
-    }
+        // Display the suburbs in suburbList on list page
+        displaySuburbs();
+    });
 
-    document.querySelector("#the_form").onclick = () => {
-        saveParameters();
-        sendRequest();
-    };
 
     // input.addEventListener('input', async function () {
     //     let response = await fetch('/search?q=' + input.value);
