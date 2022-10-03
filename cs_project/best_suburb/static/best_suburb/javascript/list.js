@@ -76,6 +76,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // Save the suburbs in a variable
             suburbList = await response.json();
+
+            // Sort suburbs in suburbList by average rent
+            suburbList.sort((a, b) => {
+                if (a.average_rent < b.average_rent) {
+                    return -1;
+                }
+
+                if (a.average_rent > b.average_rent) {
+                    return 1;
+                }
+                return 0;
+            });
+
             displaySuburbs();
         }
     }

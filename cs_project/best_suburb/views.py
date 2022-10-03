@@ -228,41 +228,52 @@ def get_photos(place_id: str):
     response = requests.request("GET", URL).json()
 
     photos = []
+
     try:
         for i in range(len(response["result"]["photos"])):
+            # Build the URL for this photo
             photo_reference = response["result"]["photos"][i]["photo_reference"]
             photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+
+            # Add this photo to the photo list
             photos.append(photo)
-    except:
+    except KeyError:  # If no photos were returned for the given suburb
         photos.append("/static/best_suburb/images/suburb.png")
+
     return photos
 
 
-def convert_coordinates(e: Suburb) -> Suburb:
-    latitude = e["latitude"]
-    longitude = e["longitude"]
+def convert_coordinates(s: dict) -> None:
+    """ Convert the geographic coordinates of the given suburb to the format ready for display.
 
+    :input s: the given suburb
+    """
+
+    # Get the latitude and longitude of the given suburb
+    latitude = s["latitude"]
+    longitude = s["longitude"]
+
+    # Convert the latitude and longitude of the given suburb to the format ready for display
     if latitude >= 0 and longitude >= 0:
-        e["latitude"] = abs(latitude)
-        e["hemisphere_latitude"] = "N"
-        e["longitude"] = abs(longitude)
-        e["hemisphere_longitude"] = "E"
+        s["latitude"] = abs(latitude)
+        s["hemisphere_latitude"] = "N"
+        s["longitude"] = abs(longitude)
+        s["hemisphere_longitude"] = "E"
     elif latitude >= 0:
-        e["latitude"] = abs(latitude)
-        e["hemisphere_latitude"] = "N"
-        e["longitude"] = abs(longitude)
-        e["hemisphere_longitude"] = "W"
+        s["latitude"] = abs(latitude)
+        s["hemisphere_latitude"] = "N"
+        s["longitude"] = abs(longitude)
+        s["hemisphere_longitude"] = "W"
     elif longitude >= 0:
-        e["latitude"] = abs(latitude)
-        e["hemisphere_latitude"] = "S"
-        e["longitude"] = abs(longitude)
-        e["hemisphere_longitude"] = "E"
+        s["latitude"] = abs(latitude)
+        s["hemisphere_latitude"] = "S"
+        s["longitude"] = abs(longitude)
+        s["hemisphere_longitude"] = "E"
     else:
-        e["latitude"] = abs(latitude)
-        e["hemisphere_latitude"] = "S"
-        e["longitude"] = abs(longitude)
-        e["hemisphere_longitude"] = "W"
-    return e
+        s["latitude"] = abs(latitude)
+        s["hemisphere_latitude"] = "S"
+        s["longitude"] = abs(longitude)
+        s["hemisphere_longitude"] = "W"
 
 
 def validate_input(uni_id: str, distance_min: str, distance_max: str, crime_rate_max: str, rent_min: str, rent_max: str) -> dict:
@@ -478,7 +489,7 @@ def info(request):
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, university)
-    suburb = convert_coordinates(suburb)
+    convert_coordinates(suburb)
 
     # get the char
     myechar = get_crimerate_char(suburb)
