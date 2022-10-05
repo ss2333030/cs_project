@@ -292,7 +292,7 @@
         </div> {% endcomment %}
 
 
-        <div class="form-class-active">
+        {% comment %} <div class="form-class-active">
             <div class="form-item-active">
                 <select class="form-select" aria-label=".form-select-lg example">
                     <option value="{-1,-1}" selected>Range of rent price per week</option>
@@ -355,7 +355,7 @@
             </div>
 
         </div>
-
+ {% endcomment %}
         <div class="sort">
 
             <div class="sort-item">
@@ -390,13 +390,13 @@
                         </p>
                         <p id="crime_rate" class="text-right">
                             Crime Rate:&nbsp;{{ suburb.crime_rate }}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-question-circle" viewBox="0 0 16 16" data-bs-toggle="tooltip"
                                 data-bs-placement="right" title="Number of criminal incident per 100,000 population">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
                                 <path
                                     d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
-                            </svg>
+                            </svg> {% endcomment %}
                         </p>
                         <p id="average_rent" class="text-right">
                             Average Rent: ${{ suburb.average_rent }}/per week

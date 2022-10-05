@@ -126,7 +126,7 @@
 
             <!-- display this suburb facility information using django language -->
             <div class="col-auto">
-                <div class="row" style="padding-top: 10px;">
+                <div class="row" style="padding-top: 7px;">
                     <div class="col-auto">
                         <img src="{% static 'best_suburb/images/location icon.png' %}" alt="location icon" width="20"height="20">
                     </div>
@@ -199,12 +199,13 @@
         
     <!-- display the recommended index chart -->
     </div>
-    <div class="col-auto">
+    {% comment %} <div class="col-auto">
             <div class="average_chart">
                 <p>{{recom_char|safe}}</p>
 
             </div>
-         </div>
+    </div> {% endcomment %}
+   
 
     
     <h3 style="padding-left:100px;padding-top:50px">Add the most traveled places to see transport availability</h3>
