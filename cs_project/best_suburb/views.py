@@ -152,17 +152,20 @@ def add_photo(s: dict) -> dict:
         s["place_id"] = ""  # This represents that this suburb doesn't have a place id
         # Use the default photo instead
         s["photo"] = "/static/best_suburb/images/suburb.png"
-    # If the API didn't return any photos
-    elif len(response["candidates"][0]["photos"]) < 1:
-        s["place_id"] = response["candidates"][0]["place_id"]
-        # Use the default photo instead
-        s["photo"] = "/static/best_suburb/images/suburb.png"
     else:
-        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
-        # Build the URL for the photo
-        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        s["place_id"] = response["candidates"][0]["place_id"]
-        s["photo"] = photo
+        try:
+            response["candidates"][0]["photos"]
+        except KeyError:
+            # If the API didn't return any photos
+            s["place_id"] = response["candidates"][0]["place_id"]
+            # Use the default photo instead
+            s["photo"] = "/static/best_suburb/images/suburb.png"
+        else:
+            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+            # Build the URL for the photo
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            s["place_id"] = response["candidates"][0]["place_id"]
+            s["photo"] = photo
 
     return s
 
