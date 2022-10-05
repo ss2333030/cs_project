@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             suburb.querySelector("#photo").src = suburbList[i].photo;
             suburb.querySelector("#photo").alt = suburbList[i].name;
             suburb.querySelector("#name").innerHTML = suburbList[i].name;
-            suburb.querySelector("#state").insertBefore(document.createTextNode("VIC &nbsp;"), suburb.querySelector("#postcode"))
+            suburb.querySelector("#state").insertBefore(document.createTextNode("VIC "), suburb.querySelector("#postcode"))
             suburb.querySelector("#postcode").innerHTML = suburbList[i].postcode;
             suburb.querySelector("#crime_rate").innerHTML = `Crime Rate:&nbsp;${suburbList[i].crime_rate}`;
             suburb.querySelector("#average_rent").innerHTML = `Average Rent: $${suburbList[i].average_rent}/per week`;

@@ -152,17 +152,20 @@ def add_photo(s: dict) -> dict:
         s["place_id"] = ""  # This represents that this suburb doesn't have a place id
         # Use the default photo instead
         s["photo"] = "/static/best_suburb/images/suburb.png"
-    # If the API didn't return any photos
-    elif len(response["candidates"][0]["photos"]) < 1:
-        s["place_id"] = response["candidates"][0]["place_id"]
-        # Use the default photo instead
-        s["photo"] = "/static/best_suburb/images/suburb.png"
     else:
-        photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
-        # Build the URL for the photo
-        photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
-        s["place_id"] = response["candidates"][0]["place_id"]
-        s["photo"] = photo
+        try:
+            response["candidates"][0]["photos"]
+        except KeyError:
+            # If the API didn't return any photos
+            s["place_id"] = response["candidates"][0]["place_id"]
+            # Use the default photo instead
+            s["photo"] = "/static/best_suburb/images/suburb.png"
+        else:
+            photo_reference = response["candidates"][0]["photos"][0]["photo_reference"]
+            # Build the URL for the photo
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            s["place_id"] = response["candidates"][0]["place_id"]
+            s["photo"] = photo
 
     return s
 
@@ -329,69 +332,82 @@ def validate_input(uni_id: str, distance_min: str, distance_max: str, crime_rate
 
 
 def direction(request):
-    """Request handler for getting information about public transport."""
+    """ Request handler for getting information about public transport.
+
+    :input request.GET.get("suburb_place_id"): the place id of the suburb
+    :input request.GET.get("desired_place_place_id"): the place id of the place entered by the user
+    :output: the route from the suburb to the place
+    """
 
     # Get the place id of the current suburb and the entered location
     suburb_place_id = request.GET.get("suburb_place_id")
-    desired_location_place_id = request.GET.get("desired_location_place_id")
+    desired_place_place_id = request.GET.get("desired_place_place_id")
 
-    # Request google map to get a list of routes, but we will only the first (optimal) route
-    routes = google_map.directions(
-        f"place_id:{suburb_place_id}",
-        f"place_id:{desired_location_place_id}",
-        "transit",
-    )
+    if suburb_place_id == "":
+        return HttpResponse(status=404)
 
-    start_address = routes[0]["legs"][0]["start_address"]
-    end_address = routes[0]["legs"][0]["end_address"]
-    distance = routes[0]["legs"][0]["distance"]
-    duration = routes[0]["legs"][0]["duration"]
-    details = []
+    # Build the URL and send an HTTP request to Google Maps Platform - Directions API
+    URL = f"https://maps.googleapis.com/maps/api/directions/json?destination=place_id:{desired_place_place_id}&origin=place_id:{suburb_place_id}&mode=transit&key={API_KEY}"
+    response = requests.request("GET", URL).json()
 
-    for i in range(len(routes[0]["legs"][0]["steps"])):
-        if routes[0]["legs"][0]["steps"]["travel_mode"] == "TRANSIT":
-            details.append(
-                {
-                    "duration": routes[0]["legs"][0]["steps"]["duration"],
-                    "departure_stop": routes[0]["legs"][0]["steps"]["transit_details"][
-                        "departure_stop"
-                    ]["name"],
-                    "arrival_stop": routes[0]["legs"][0]["steps"]["transit_details"][
-                        "arrival_stop"
-                    ]["name"],
-                    "type": routes[0]["legs"][0]["steps"]["transit_details"]["lines"][
-                        "vehicle"
-                    ]["name"],
-                    "transit_line_name": routes[0]["legs"][0]["steps"][
-                        "transit_details"
-                    ]["lines"]["name"],
-                    "headsign": routes[0]["legs"][0]["steps"]["transit_details"][
-                        "headsign"
-                    ],
-                }
-            )
-        else:
-            details.append(
-                {
-                    "duration": routes[0]["legs"][0]["steps"]["duration"],
-                    "distance": routes[0]["legs"][0]["steps"]["duration"],
-                }
-            )
+    if len(response["routes"]) < 1:
+        return HttpResponse(status=404)
+    else:
+        # Get details
+        try:
+            end_address = response["routes"][0]["legs"][0]["end_address"]
+            distance = response["routes"][0]["legs"][0]["distance"]
+            duration = response["routes"][0]["legs"][0]["duration"]
+        except KeyError:
+            return HttpResponse(status=404)
+
+        return JsonResponse({"end_address": end_address, "distance": distance, "duration": duration})
+    # details = []
+
+    # for i in range(len(response["routes"][0]["legs"][0]["steps"])):
+    #     if response["routes"][0]["legs"][0]["steps"]["travel_mode"] == "TRANSIT":
+    #         details.append(
+    #             {
+    #                 "duration": response["routes"][0]["legs"][0]["steps"]["duration"],
+    #                 "departure_stop": response["routes"][0]["legs"][0]["steps"]["transit_details"][
+    #                     "departure_stop"
+    #                 ]["name"],
+    #                 "arrival_stop": response["routes"][0]["legs"][0]["steps"]["transit_details"][
+    #                     "arrival_stop"
+    #                 ]["name"],
+    #                 "type": response["routes"][0]["legs"][0]["steps"]["transit_details"]["lines"][
+    #                     "vehicle"
+    #                 ]["name"],
+    #                 "transit_line_name": response["routes"][0]["legs"][0]["steps"][
+    #                     "transit_details"
+    #                 ]["lines"]["name"],
+    #                 "headsign": response["routes"][0]["legs"][0]["steps"]["transit_details"][
+    #                     "headsign"
+    #                 ],
+    #             }
+    #         )
+    #     else:
+    #         details.append(
+    #             {
+    #                 "duration": response["routes"][0]["legs"][0]["steps"]["duration"],
+    #                 "distance": response["routes"][0]["legs"][0]["steps"]["duration"],
+    #             }
+    #         )
 
 
 def places(request):
-    """Request handler for getting a list of places."""
+    """ Request handler for getting a list of candidate places based on the user input.
+        This is used to achieve autocompletion on the info page.
 
-    URL = (
-        "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="
-        + request.GET.get("place")
-        + "&ipbias&components=country:au&key=AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
-    )
+    :input request.GET.get("place"): the place entered by the user
+    :output: A list of candidate places
+    """
 
-    payload = {}
-    headers = {}
-    response = requests.request(
-        "GET", URL, headers=headers, data=payload).json()
+    # Build the URL and send an HTTP request to Google Maps Platform - Places API - Place Autocomplete
+    URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" + \
+        request.GET.get("place") + \
+        f"&ipbias&components=country:au&key={API_KEY}"
+    response = requests.request("GET", URL).json()
 
     return JsonResponse(response)
 
@@ -489,6 +505,7 @@ def info(request):
     # Add additional attributes to the suburb
     suburb["photos"] = get_photos(request.GET.get("place_id"))
     suburb["distance"] = get_distance(suburb, university)
+    suburb["place_id"] = request.GET.get("place_id")
     convert_coordinates(suburb)
 
     # get the char
