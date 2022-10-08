@@ -49,7 +49,6 @@ U = TypeVar("U")
 
 # ####################### Declare the API key and a new instance of goole map ################
 API_KEY = "AIzaSyDRsqK_7w_eBkmNJZUczRnyC9jJx5gj5xQ"
-google_map = Client(key=API_KEY)
 
 INFINITY = 10000000  # A constant that represents infinity in this app
 UNDEFINED = -1  # A constant that represents undefined in this app
@@ -133,6 +132,20 @@ def add_photo(s: dict) -> dict:
         we can see a photo of the suburb on the list page.
     """
 
+    # Check if preconditions are met
+    try:
+        temp = s["name"]
+        temp = s["latitude"]
+        temp = s["longitude"]
+    except KeyError:
+        raise AssertionError("The given suburb is invalid.")
+
+    assert s["name"] != "", "The given suburb has an invalid name."
+    assert 0 <= s["latitude"] <= 90 or - \
+        90 <= s["latitude"] <= 0, "The given suburb has an invalid latitude."
+    assert 0 <= s["longitude"] <= 180 or - \
+        180 <= s["longitude"] <= 0, "The given suburb has an invalid longitude."
+
     # This builds the URL required by Google Maps Platform - Places API - Place Search - Find Place
     URL = (
         "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="
@@ -147,6 +160,8 @@ def add_photo(s: dict) -> dict:
 
     # Send a GET request to Google Maps Platform - Places API - Place Search - Find Place
     response = requests.request("GET", URL).json()
+
+    assert response["status"] != "INVALID_REQUEST" and response["status"] != "REQUEST_DENIED"
 
     if len(response["candidates"]) < 1:  # If the API didn't find the given suburb at all
         s["place_id"] = ""  # This represents that this suburb doesn't have a place id
