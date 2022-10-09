@@ -241,6 +241,10 @@ def get_photos(place_id: str):
     :output: a list of photos of the suburb    
     """
 
+    # If no place id is provided, return the default image
+    if place_id == "":
+        return ["/static/best_suburb/images/suburb.png"]
+
     # Build the URL and send an HTTP request to Google Maps Platform - Places API - Place Details
     URL = f"https://maps.googleapis.com/maps/api/place/details/json?fields=photos&place_id={place_id}&key={API_KEY}"
     response = requests.request("GET", URL).json()
@@ -251,11 +255,15 @@ def get_photos(place_id: str):
         for i in range(len(response["result"]["photos"])):
             # Build the URL for this photo
             photo_reference = response["result"]["photos"][i]["photo_reference"]
-            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference={photo_reference}&key={API_KEY}"
+            photo = f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&maxheight=800&photo_reference={photo_reference}&key={API_KEY}"
 
             # Add this photo to the photo list
             photos.append(photo)
     except KeyError:  # If no photos were returned for the given suburb
+        photos.append("/static/best_suburb/images/suburb.png")
+
+    # If no photos were returned for the given suburb
+    if len(photos) == 0:
         photos.append("/static/best_suburb/images/suburb.png")
 
     return photos
