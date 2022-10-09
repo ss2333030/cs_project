@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data["predictions"].forEach((e) => {
           const option = document.createElement("option");
           option.innerHTML = `${e["structured_formatting"]["main_text"]} ${e["structured_formatting"]["secondary_text"]}`;
-          option.value = e["place_id"];
+          option.id = e["place_id"];
           results.appendChild(option);
         });
       })
