@@ -147,11 +147,13 @@
                             {% for photo in suburb.photos %}
                             {% if forloop.counter0 == 0%}
                             <div class="carousel-item active">
-                                <img src="{{photo}}" class="d-block w-70" alt="{{ suburb.name }}" style="width:550px;height:320px">
+                                <img src="{{photo}}" class="d-block w-70" alt="{{ suburb.name }}"
+                                    style="width:550px;height:320px">
                             </div>
                             {% else %}
                             <div class="carousel-item">
-                                <img src="{{photo}}" class="d-block w-70" alt="{{ suburb.name }}" style="width:550px;height:320px">
+                                <img src="{{photo}}" class="d-block w-70" alt="{{ suburb.name }}"
+                                    style="width:550px;height:320px">
                             </div>
                             {% endif %}
                             {% endfor %}
